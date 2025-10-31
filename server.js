@@ -1,6 +1,7 @@
 import express from 'express';
 import add from './math.js';
 import { subtract, multiply, divide, PI } from './math1.js';
+import os from 'os';
 
 
 const app = express();
@@ -8,6 +9,10 @@ const app = express();
 app.get('/', (req, res) => {
     res.send('Hello World!');
 })
+
+console.log("CPU Architecture:", os.arch());
+console.log("Total Memory:", os.totalmem());
+console.log("FREE Memory:", os.freemem());
 
 console.log(add(2, 4));
 console.log(subtract(2, 4));
