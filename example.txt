@@ -1,0 +1,2 @@
+This is an example file created using fs module in Node.js the text is updated due to write file
+Appended content to the file.
