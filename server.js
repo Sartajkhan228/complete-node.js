@@ -5,6 +5,7 @@ import os from 'os';
 import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import { readFile, updateFile, writeFile } from './fsModules.js';
 import emitter from './events.js';
+import eventEmitter from './eventTask.js';
 
 
 const app = express();
@@ -35,11 +36,17 @@ app.get('/', (req, res) => {
 // console.log("Read file", readFile)
 // console.log("Update file", updateFile)
 
-emitter.emit("greet", "Sartaj", "event emitter");
+// emitter.emit("greet", "Sartaj", "event emitter");
 
-emitter.emit("eventFuction", { name: "Sartaj", age: 23 });
+// emitter.emit("eventFuction", { name: "Sartaj", age: 23 });
 
 
+// event task examples
+eventEmitter.emit("user-login", { username: "Sartaj" });
+eventEmitter.emit("user-purchase", { productPurchase: "laptop" });
+eventEmitter.emit("profile-update", { profileUpdate: "email" });
+eventEmitter.emit("user-logout", { username: "Sartaj" });
+eventEmitter.emit("summary-event");
 
 
 
