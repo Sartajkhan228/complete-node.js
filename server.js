@@ -6,6 +6,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import { readFile, updateFile, writeFile } from './fsModules.js';
 import emitter from './events.js';
 import eventEmitter from './eventTask.js';
+import { promises as fs } from 'fs'
 
 
 const app = express();
@@ -49,6 +50,19 @@ app.get('/', (req, res) => {
 // eventEmitter.emit("summary-event");
 
 
+// synchronus and asynchronus code
+
+// synchrous tasks perform googles v8 engine and Asynchrous tasks handle by Libuv(the C++ library able to handle eventloop and thread pool)
+// main thread handles small tasks like synchrous code while thread pool handles Async operations
+console.log("start")
+
+const asyncFunc = async () => {
+    const data = await fs.readFile("D:\example.txt", "utf-8")
+    console.log("async data", data)
+}
+asyncFunc();
+
+console.log("End")
 
 
 
