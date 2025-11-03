@@ -13,26 +13,26 @@ app.get('/', (req, res) => {
 })
 
 // os module examples
-console.log("CPU Architecture:", os.arch());
-console.log("Total Memory:", os.totalmem());
-console.log("FREE Memory:", os.freemem());
+// console.log("CPU Architecture:", os.arch());
+// console.log("Total Memory:", os.totalmem());
+// console.log("FREE Memory:", os.freemem());
 
 // Crypto examples
-console.log("Crypto bytes", generateCryptoBytes)
-console.log("Crypto hashed", generateHash)
-console.log("Crypto hashed1", generateHash1)
+// console.log("Crypto bytes", generateCryptoBytes)
+// console.log("Crypto hashed", generateHash)
+// console.log("Crypto hashed1", generateHash1)
 
 // Math examples
-console.log(add(2, 4));
-console.log(subtract(2, 4));
-console.log(multiply(2, 4));
-console.log(divide(2, 4));
-console.log(PI);
+// console.log(add(2, 4));
+// console.log(subtract(2, 4));
+// console.log(multiply(2, 4));
+// console.log(divide(2, 4));
+// console.log(PI);
 
 // fs module example
-console.log("write file", writeFile)
-console.log("Read file", readFile)
-console.log("Update file", updateFile)
+// console.log("write file", writeFile)
+// console.log("Read file", readFile)
+// console.log("Update file", updateFile)
 
 const PORT = process.env.PORT || 3000;
 
