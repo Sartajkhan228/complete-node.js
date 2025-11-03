@@ -42,22 +42,11 @@ app.get('/', (req, res) => {
 
 
 // event task examples
-eventEmitter.emit("user-login", { username: "Sartaj" });
-eventEmitter.emit("user-purchase", { productPurchase: "laptop" });
-eventEmitter.emit("profile-update", { profileUpdate: "email" });
-eventEmitter.emit("user-logout", { username: "Sartaj" });
-eventEmitter.emit("summary-event");
-
-
-
-
-
-
-
-
-
-
-
+// eventEmitter.emit("user-login", { username: "Sartaj" });
+// eventEmitter.emit("user-purchase", { productPurchase: "laptop" });
+// eventEmitter.emit("profile-update", { profileUpdate: "email" });
+// eventEmitter.emit("user-logout", { username: "Sartaj" });
+// eventEmitter.emit("summary-event");
 
 
 
