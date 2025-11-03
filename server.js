@@ -4,6 +4,7 @@ import { subtract, multiply, divide, PI } from './math1.js';
 import os from 'os';
 import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import { readFile, updateFile, writeFile } from './fsModules.js';
+import emitter from './events.js';
 
 
 const app = express();
@@ -33,6 +34,30 @@ app.get('/', (req, res) => {
 // console.log("write file", writeFile)
 // console.log("Read file", readFile)
 // console.log("Update file", updateFile)
+
+emitter.emit("greet", "Sartaj", "event emitter");
+
+emitter.emit("eventFuction", { name: "Sartaj", age: 23 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
