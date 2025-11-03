@@ -7,6 +7,7 @@ import { readFile, updateFile, writeFile } from './fsModules.js';
 import emitter from './events.js';
 import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
+import { showMenu } from './cliCrud.js';
 
 
 const app = express();
@@ -54,15 +55,19 @@ app.get('/', (req, res) => {
 
 // synchrous tasks perform googles v8 engine and Asynchrous tasks handle by Libuv(the C++ library able to handle eventloop and thread pool)
 // main thread handles small tasks like synchrous code while thread pool handles Async operations
-console.log("start")
+// console.log("start")
 
-const asyncFunc = async () => {
-    const data = await fs.readFile("D:\example.txt", "utf-8")
-    console.log("async data", data)
-}
-asyncFunc();
+// const asyncFunc = async () => {
+//     const data = await fs.readFile("D:\example.txt", "utf-8")
+//     console.log("async data", data)
+// }
+// asyncFunc();
 
-console.log("End")
+// console.log("End")
+
+
+// creating crud at command line interface(CLI)
+showMenu()
 
 
 
