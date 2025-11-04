@@ -7,7 +7,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 // import emitter from './tasks/events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
-import { getWeather } from './miniprojects/weather.js';
+// import { getWeather } from './miniprojects/weather.js';
 // import { fetchApi } from './miniprojects/currency_converter.js';
 // import { getJokes } from './miniprojects/joke_generator.js';
 // import { fileCreation } from './miniprojects/cliFileCreation.js';
@@ -84,7 +84,7 @@ app.get('/', (req, res) => {
 
 
 // Fetching Api to get weather data
-getWeather()
+// getWeather()
 
 
 
