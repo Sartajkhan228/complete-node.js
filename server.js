@@ -7,7 +7,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import emitter from './events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
-import { getJokes } from './joke_generator.js';
+// import { getJokes } from './joke_generator.js';
 // import { fileCreation } from './cliFileCreation.js';
 // import { showMenu } from './cliCrud.js';
 
@@ -75,7 +75,7 @@ app.get('/', (req, res) => {
 // fileCreation()
 
 // Fetching api through cli
-getJokes()
+// getJokes()
 
 
 
