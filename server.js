@@ -7,6 +7,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import emitter from './events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
+import { fileCreation } from './cliFileCreation.js';
 // import { showMenu } from './cliCrud.js';
 
 
@@ -69,6 +70,8 @@ app.get('/', (req, res) => {
 // creating crud at command line interface(CLI)
 // showMenu()
 
+// Creating file using Command Line Interface(CLI)
+fileCreation()
 
 
 
@@ -77,5 +80,5 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    // console.log(`\nServer is running on port ${PORT}`);
 })
