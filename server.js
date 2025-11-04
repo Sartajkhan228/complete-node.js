@@ -4,12 +4,12 @@ import { subtract, multiply, divide, PI } from './math1.js';
 import os from 'os';
 import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 // import { readFile, updateFile, writeFile } from './fsModules.js';
-import emitter from './events.js';
+// import emitter from './tasks/events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
-// import { getJokes } from './joke_generator.js';
-// import { fileCreation } from './cliFileCreation.js';
-// import { showMenu } from './cliCrud.js';
+// import { getJokes } from './miniprojects/joke_generator.js';
+// import { fileCreation } from './miniprojects/cliFileCreation.js';
+// import { showMenu } from './miniprojects/cliCrud.js';
 
 
 const app = express();
