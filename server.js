@@ -7,7 +7,8 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 import emitter from './events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
-import { fileCreation } from './cliFileCreation.js';
+import { getJokes } from './joke_generator.js';
+// import { fileCreation } from './cliFileCreation.js';
 // import { showMenu } from './cliCrud.js';
 
 
@@ -71,7 +72,10 @@ app.get('/', (req, res) => {
 // showMenu()
 
 // Creating file using Command Line Interface(CLI)
-fileCreation()
+// fileCreation()
+
+// Fetching api through cli
+getJokes()
 
 
 
@@ -80,5 +84,5 @@ fileCreation()
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    // console.log(`\nServer is running on port ${PORT}`);
+    console.log(`\nServer is running on port ${PORT}`);
 })
