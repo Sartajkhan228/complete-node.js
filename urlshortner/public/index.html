@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Url shortner</h1>
+
+        <form  id="shorten-form">
+            <div class="input_box">
+                <label for="url">Enter Url:</label>
+                <input type="url" name="url" id="url" required>
+            </div>
+            <div class="input_box">
+                <label for="shortCode">Custom short url(optional)</label>
+                <input type="text" name="shortCode" id="shortCode">
+            </div>
+            <button type="submit">Shorten</button>
+        </form>
+
+        <h2>Shortend URLs</h2>
+        <ul id="shortened_urls"> </ul>
+    </div>
+
+    <!-- javascript logics from here -->
+
+    <script>
+        const shortenUrls = document.getElementById("shortened_urls");
+        document.getElementById("shorten-form").addEventListener('submit', async (event)=>{
+            event.preventDefault()
+            const formData = new FormData(event.target)
+
+            const url = formData.get('url')
+            const shortCode = formData.get('shortCode')
+
+            // console.log(url,shortCode)
+
+            try {
+                const response = await fetch("/api/shorten", {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({url,shortCode})
+                })
+
+                const data =  await response.json();
+
+                if(response.ok){
+                    shortenUrls.innerHTML = `
+                    <li>${data.message}</li>
+                        <li><a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a></li>
+                    `
+                }else{
+                shortenUrls.innerHTML = `
+                <li class="error_li">${data.error}</li>`
+                }
+
+            } catch (error) {
+                 shortenUrls.innerHTML = `
+                <li class="error_li">${error.message}</li>`
+            }
+        })
+
+    </script>    
+</body>
+</html>
+
