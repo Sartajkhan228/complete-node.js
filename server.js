@@ -115,7 +115,6 @@ app.get("/contact", (req, res) => {
         `)
 })
 
-
 // zod validatin
 
 const userSchema = z.object({
