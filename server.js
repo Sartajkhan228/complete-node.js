@@ -1,4 +1,5 @@
 import express from 'express';
+import dotenv from 'dotenv'
 import add from './math.js';
 import { subtract, multiply, divide, PI } from './math1.js';
 import os from 'os';
@@ -7,6 +8,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 // import emitter from './tasks/events.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
+import z, { email } from 'zod';
 // import { getWeather } from './miniprojects/weather.js';
 // import { fetchApi } from './miniprojects/currency_converter.js';
 // import { getJokes } from './miniprojects/joke_generator.js';
@@ -15,6 +17,8 @@ import { promises as fs } from 'fs'
 
 
 const app = express();
+app.use(express.json())
+dotenv.config();
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -112,10 +116,31 @@ app.get("/contact", (req, res) => {
 })
 
 
+// zod validatin
+
+const userSchema = z.object({
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    email: z.string().email("Invalid email format"),
+    age: z.number().min(18, "Age must be at least 18"),
+});
+
+app.post("/api/register", (req, res) => {
+
+    const result = userSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(400).json({
+            error: result.error.errors.map(item => item.message)
+        })
+    }
+    res.status(200).json({
+        message: "User registered successfully",
+        data: result.data,
+    })
+});
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`\nServer is running on port ${PORT}`);
+    console.log(`\nServer is running on http://localhost:${PORT}`);
 })
