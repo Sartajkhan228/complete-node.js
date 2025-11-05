@@ -87,6 +87,30 @@ app.get('/', (req, res) => {
 // getWeather()
 
 
+app.get("/contact", (req, res) => {
+
+    res.send(`
+          <div class="container">
+        <h1>Url shortner</h1>
+
+        <form  id="shorten-form">
+            <div class="input_box">
+                <label for="url">Enter Url:</label>
+                <input type="url" name="url" id="url" required>
+            </div>
+            <div class="input_box">
+                <label for="shortCode">Custom short url(optional)</label>
+                <input type="text" name="shortCode" id="shortCode">
+            </div>
+            <button type="submit">Shorten</button>
+        </form>
+
+        <h2>Shortend URLs</h2>
+        <ul id="shortened_urls"> </ul>
+    </div>
+        `)
+})
+
 
 
 
