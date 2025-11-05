@@ -1,7 +1,7 @@
 import readline from 'readline/promises'
 import chalk from 'chalk';
 
-const API_KEY = '58a50ea4ba45fb3464d7b03c6173225d'
+const API_KEY = process.env.WEATHER_API_KEY
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
 const rl = readline.createInterface({

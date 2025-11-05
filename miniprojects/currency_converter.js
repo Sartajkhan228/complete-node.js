@@ -7,7 +7,7 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
-const apiKey = '520fd55e811dbb139d6cda74'
+const apiKey = process.env.CURRENCY_CONVERTER_API_KEY
 const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`
 
 export const fetchApi = () => {
