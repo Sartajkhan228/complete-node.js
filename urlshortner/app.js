@@ -5,7 +5,10 @@ import path from 'path';
 
 const app = express();
 app.use(express.json());
-app.use(express.static("public"));
+// app.use(express.static("public"));
+// or
+const staticPath = path.join(import.meta.dirname, "public")
+app.use(express.static(staticPath))
 
 const DATA_FILE = path.join("urls.json")
 
