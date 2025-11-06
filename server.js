@@ -9,6 +9,7 @@ import { generateCryptoBytes, generateHash, generateHash1 } from './crypto.js';
 // import eventEmitter from './eventTask.js';
 import { promises as fs } from 'fs'
 import z, { email } from 'zod';
+import path from 'path';
 // import { getWeather } from './miniprojects/weather.js';
 // import { fetchApi } from './miniprojects/currency_converter.js';
 // import { getJokes } from './miniprojects/joke_generator.js';
@@ -136,6 +137,15 @@ app.post("/api/register", (req, res) => {
         data: result.data,
     })
 });
+
+
+// ES Modules
+// In node version 20.0.0 plus we use this es modules import for files
+console.log(import.meta.dirname)
+console.log(import.meta.filename)
+
+// we use it get files like this
+app.use(express.static(path.join(import.meta.dirname, 'public')));
 
 
 const PORT = process.env.PORT || 5000;
