@@ -20,6 +20,7 @@ import path from 'path';
 const app = express();
 app.use(express.json())
 dotenv.config();
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -96,22 +97,20 @@ app.get("/contact", (req, res) => {
 
     res.send(`
           <div class="container">
-        <h1>Url shortner</h1>
+        <h1>Login</h1>
 
-        <form  id="shorten-form">
+        <form action="/login" method="POST">
             <div class="input_box">
-                <label for="url">Enter Url:</label>
-                <input type="url" name="url" id="url" required>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" required>
             </div>
             <div class="input_box">
-                <label for="shortCode">Custom short url(optional)</label>
-                <input type="text" name="shortCode" id="shortCode">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
             </div>
-            <button type="submit">Shorten</button>
+            <button type="submit">login</button>
         </form>
-
-        <h2>Shortend URLs</h2>
-        <ul id="shortened_urls"> </ul>
+   
     </div>
         `)
 })
@@ -169,6 +168,13 @@ app.get("/cities", (req, res) => {
 app.get("/cities", (req, res) => {
     console.log(req.query)
     res.send(`<h1>User searched for a city ${req.query.page} and  ${req.query.limit} </h1>`)
+})
+
+
+// body parameters
+app.post("/login", (req, res) => {
+    console.log("form submitted", req.body)
+    res.redirect("/")
 })
 
 const PORT = process.env.PORT || 5000;
