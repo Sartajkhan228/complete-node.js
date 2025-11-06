@@ -147,6 +147,17 @@ console.log(import.meta.filename)
 // we use it get files like this
 app.use(express.static(path.join(import.meta.dirname, 'public')));
 
+// Route parameters
+
+app.get("/profile/:username", (req, res) => {
+    console.log(req.params)
+    res.send(`This is route parameter, The username is ${req.params.username}`)
+});
+
+app.get("/profile/:username/article/:slug", (req, res) => {
+    const formateSlug = req.params.slug.replace(/-/g, " ")
+    res.send(`<h1> Article ${req.params.username} by ${formateSlug} </h1>`)
+});
 
 const PORT = process.env.PORT || 5000;
 
