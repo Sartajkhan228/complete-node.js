@@ -174,6 +174,7 @@ app.get("/cities", (req, res) => {
 // body parameters
 app.post("/login", (req, res) => {
     console.log("form submitted", req.body)
+    res.send(`your name ${req.body.name} and email is ${req.body.email}`)
     res.redirect("/")
 })
 
