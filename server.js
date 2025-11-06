@@ -159,6 +159,18 @@ app.get("/profile/:username/article/:slug", (req, res) => {
     res.send(`<h1> Article ${req.params.username} by ${formateSlug} </h1>`)
 });
 
+// Query parameters
+
+app.get("/cities", (req, res) => {
+    console.log(req.query)
+    res.send(`<h1>User searched for a city ${req.query.cities}  </h1>`)
+})
+
+app.get("/cities", (req, res) => {
+    console.log(req.query)
+    res.send(`<h1>User searched for a city ${req.query.page} and  ${req.query.limit} </h1>`)
+})
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
