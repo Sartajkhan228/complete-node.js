@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Details</title>
+</head>
+<body>
+
+  <h1>This is an EJS file used to render dynamic HTML text</h1>
+
+  <% stdDetails.forEach(item => { %>
+    <div>
+      <p><strong>Name:</strong> <%= item.name %></p>
+      <p><strong>Class:</strong> <%= item.class %></p>
+      <p><strong>Favorite Subject:</strong> <%= item.favoriteSub %></p>
+      <hr>
+    </div>
+  <% }) %>
+
+</body>
+</html>
