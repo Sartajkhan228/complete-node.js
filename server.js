@@ -22,6 +22,9 @@ app.use(express.json())
 dotenv.config();
 app.use(express.urlencoded({ extended: true }))
 
+
+app.set()
+
 app.get('/', (req, res) => {
     res.send('Hello World!');
 })
