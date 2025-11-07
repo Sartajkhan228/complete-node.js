@@ -1,0 +1,10 @@
+1. The quick brown fox jumps over the lazy dog.
+2. JavaScript is a versatile language for both frontend and backend.
+3. Streams in Node.js allow efficient handling of large data.
+4. Learning by building projects makes concepts stick better.
+5. Express is a minimalist web framework for Node.js.
+6. Chunking helps process files without loading them fully in memory.
+7. Buffer represents raw binary data in Node.js.
+8. Using pipe() makes stream data flow automatically from source to destination.
+9. Error handling in streams is crucial for stability.
+10. Practice every day to master Node.js and backend development.
