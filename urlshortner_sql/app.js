@@ -1,17 +1,25 @@
-import express from "express"
+import express, { urlencoded } from "express"
 import dotenv from "dotenv"
+import { get404 } from "./controllers/error.contriller.js"
+import urlRoute from "./routes/urlRoutes.js"
+import { env } from "./config/env.js"
 
 dotenv.config()
 
 const app = express()
+// app.use(express.static("public"));
+
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 
-app.get("/", (req, res) => {
-    res.send(`<h1>This is home page</h1>`)
-})
+app.set("view engine", "ejs")
 
-const port = process.env.PORT
+app.use(urlRoute)
+app.use(get404)
+
+
+const port = env.PORT
 
 app.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}`)

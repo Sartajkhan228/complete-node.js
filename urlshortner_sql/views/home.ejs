@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+</head>
+<body>
+
+  <style>
+    #input_div{
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    input{
+      padding: 5px;
+      border-radius: 5px;
+      border-color: gray;
+      outline: none;
+    }
+
+    button{
+      width: max-content;
+      padding: 7px 12px;
+      border-radius: 5px;
+      background-color: rgb(12, 140, 244);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    button:hover{
+    background-color: rgb(1, 97, 193);
+    }
+  </style>
+
+
+  <%- include('header') %>
+
+  <main style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:74vh;">
+    <form action="/" method="POST" style="display:flex; flex-direction:column; gap:20px;">
+      <div id="input_div">
+        <label>Enter URL:</label>
+        <input type="url" name="url" required>
+      </div>
+
+      <div id="input_div">
+        <label>Custom Short Code (optional):</label>
+        <input type="text" name="shortCode">
+      </div>
+
+      <button type="submit">Shorten</button>
+    </form>
+  </main>
+
+  <%- include('footer') %>
+</body>
+</html>
