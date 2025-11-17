@@ -89,14 +89,6 @@ const main = async () => {
 
     // console.log(uniqueData)
 
-    const dataToFind = await prisma.user.findUnique({
-        where: {
-            name: "Aim"
-        }
-
-    })
-    console.log(dataToFind)
-
 
 }
 
