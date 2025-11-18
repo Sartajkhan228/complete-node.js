@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Welcome</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="bg-blue-600 text-white py-4 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">My App</h1>
+      <div class="space-x-6">
+        <a href="/login" class="text-white hover:text-gray-200 font-medium">Login</a>
+        <a href="/register" class="text-white hover:text-gray-200 font-medium">Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow flex justify-center items-center px-4">
+    <div class="bg-white p-10 rounded-xl shadow-lg max-w-xl text-center">
+
+      <h2 class="text-3xl font-bold text-blue-600">Welcome to the Home Page</h2>
+
+      <p class="text-gray-700 text-lg mt-4 leading-relaxed">
+        This is the homepage of your Node.js + EJS authentication application built using TailwindCSS.
+      </p>
+
+      <a href="/login"
+         class="inline-block mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition">
+        Get Started
+      </a>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-200 text-center py-4 text-gray-600">
+    &copy; <%= new Date().getFullYear() %> My App. All rights reserved.
+  </footer>
+
+</body>
+</html>
