@@ -20,23 +20,24 @@ const main = async () => {
 
     // TO GET USERS
 
-    const users = await db.select().from(usersTable)
-    console.log("Getting all users from database", users)
+    // const users = await db.select().from(usersTable)
+    // console.log("Getting all users from database", users)
 
 
     // TO UPDATE USERS
 
-    await db.update(usersTable)
-        .set({
-            age: 31
-        })
-        .where(eq(usersTable.email, user.email));
-    console.log("User info updated")
+    // await db.update(usersTable)
+    //     .set({
+    //         age: 31
+    //     })
+    //     .where(eq(usersTable.email, user.email));
+    // console.log("User info updated")
 
     // TO DELETE USERS
 
-    await db.delete(usersTable).where(eq(usersTable.email, user.email));
-    console.log("user deleted")
+    // await db.delete(usersTable).where(eq(usersTable.email, user.email));
+    // console.log("user deleted")
+
 }
 main()
 
