@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1763408466746,
+      "tag": "0000_dazzling_praxagora",
+      "breakpoints": true
+    }
+  ]
+}
