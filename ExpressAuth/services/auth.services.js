@@ -15,9 +15,9 @@ export const hashPassword = async (password) => {
     return await argon2.hash(password)
 };
 
-export const compareHashedPassword = async (hash, password) => {
+export const compareHashedPassword = async ({ hashedPassword, password }) => {
 
-    return await argon2.verify(hash, password)
+    return await argon2.verify(hashedPassword, password)
 }
 
 export const createUser = async ({ name, email, password }) => {

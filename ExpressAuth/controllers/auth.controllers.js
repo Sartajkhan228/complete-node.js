@@ -1,4 +1,5 @@
 import {
+    compareHashedPassword,
     createUser, getUserByEmail, hashPassword
 } from "../services/auth.services.js"
 
@@ -22,7 +23,7 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     const user = await getUserByEmail(email)
-    console.log(userExist)
+    console.log(user)
     if (user) {
         return res.redirect("/login")
     }
@@ -48,11 +49,10 @@ export const login = async (req, res) => {
         return res.redirect("/login")
     }
 
-    const hash = compareHashedPassword(user.password, password)
+    const isMatch = await compareHashedPassword({ hashedPassword: user.password, password: password })
 
-    if (user.password !== password) {
+    if (!isMatch) {
         return res.redirect("/login")
-
     }
 
     res.cookie("isLoggedIn", true)
