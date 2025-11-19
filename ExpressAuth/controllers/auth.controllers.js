@@ -20,6 +20,8 @@ export const getLoginPage = async (req, res) => {
 
 export const register = async (req, res) => {
 
+    if (req.user) return res.redirect("/")
+
     const { name, email, password } = req.body;
 
     const user = await getUserByEmail(email)
@@ -40,6 +42,8 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     // res.setHeader("Set-Cookie", "isLoggedIn=true; path=/;")
+
+    if (req.user) return res.redirect("/")
 
     const { email, password } = req.body;
 
@@ -73,4 +77,13 @@ export const getMe = async (req, res) => {
     if (!req.user) return res.send("User not logged in")
 
     res.send(`<h1> Hey! ${req.user.name} - ${req.user.email}</h1>`)
+}
+
+// Logout
+
+export const logout = async (req, res) => {
+
+    res.clearCookie("access_token")
+
+    res.redirect("/login")
 }
