@@ -8,11 +8,11 @@ export const renderHomePage = async (req, res) => {
 }
 
 export const getRegisterPage = async (req, res) => {
-    res.render("register")
+    return res.render("register", { errors: req.flash("errors") })
 }
 
 export const getLoginPage = async (req, res) => {
-    res.render("login")
+    res.render("login", { errors: req.flash("errors") })
 }
 
 
@@ -25,9 +25,10 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     const user = await getUserByEmail(email)
-    console.log(user)
+
     if (user) {
-        return res.redirect("/login")
+        req.flash("errors", "User already exists")
+        return res.redirect("/register")
     }
 
     const hashedPassword = await hashPassword(password)
@@ -50,12 +51,14 @@ export const login = async (req, res) => {
     const user = await getUserByEmail(email);
 
     if (!user) {
+        req.flash("errors", "Email or password is incorrect")
         return res.redirect("/login")
     }
 
     const isMatch = await compareHashedPassword({ hashedPassword: user.password, password: password })
 
     if (!isMatch) {
+        req.flash("errors", "Email or password is incorrect")
         return res.redirect("/login")
     }
 

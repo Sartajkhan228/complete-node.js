@@ -16,11 +16,18 @@
 
         <form action="/login" method="POST" class="space-y-4">
 
+            
             <input type="email" name="email" placeholder="Email"
                 class="w-full border px-3 py-2 rounded" required>
 
             <input type="password" name="password" placeholder="Password"
                 class="w-full border px-3 py-2 rounded" required>
+
+                 <% if(errors && errors.length>0) { %>
+                    <% errors.forEach((item)=>{%>
+                        <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600"><%= item %></p>
+                        <% }) %>
+                        <% } %>
 
             <button class="w-full bg-blue-600 text-white py-2 rounded-md font-semibold">
                 Login
