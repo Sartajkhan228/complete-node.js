@@ -1,6 +1,7 @@
 import express from 'express'
 import authRouter from './routers/authRouters.js'
 import cookieParser from 'cookie-parser'
+import { verifyAuthentication } from './middlewares/verify-auth-middleware.js';
 
 
 const app = express()
@@ -12,6 +13,14 @@ app.set("view engine", "ejs")
 
 // We use cookie parser to get cookies from client request
 app.use(cookieParser());
+
+// middleware
+app.use(verifyAuthentication)
+app.use((req, res, next) => {
+    res.locals.user = req.user
+
+    return next()
+})
 
 
 app.use("/", authRouter)

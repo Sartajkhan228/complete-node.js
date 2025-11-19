@@ -67,3 +67,10 @@ export const login = async (req, res) => {
 
     res.render("home")
 }
+
+export const getMe = async (req, res) => {
+
+    if (!req.user) return res.send("User not logged in")
+
+    res.send(`<h1> Hey! ${req.user.name} - ${req.user.email}</h1>`)
+}
