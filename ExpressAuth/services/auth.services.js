@@ -23,18 +23,21 @@ export const compareHashedPassword = async ({ hashedPassword, password }) => {
 
 export const createUser = async ({ name, email, password }) => {
 
-    // const hashedPassword = crypto.hash(256).toString('hex')
-
     return await db.insert(usersTable).values({ name, email, password })
 
 }
 
-export const generateToken = async ({ id, name, email }) => {
+export const generateToken = ({ id, name, email }) => {
 
     return jwt.sign({ id, name, email }, process.env.JWT_SECRET, {
         expiresIn: "7d"
     })
 
 };
+
+export const verifyToken = (token) => {
+
+    return jwt.verify(token, process.env.JWT_SECRET)
+}
 
 
