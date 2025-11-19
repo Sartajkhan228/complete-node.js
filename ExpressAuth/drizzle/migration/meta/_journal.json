@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1763487746322,
+      "tag": "0000_wakeful_the_order",
+      "breakpoints": true
+    }
+  ]
+}

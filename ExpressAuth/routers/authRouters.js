@@ -1,13 +1,12 @@
 import express from 'express'
-import { getLoginPage, getRegisterPage, login, renderHomePage } from '../controllers/auth.controllers.js';
+import { getLoginPage, getRegisterPage, login, register, renderHomePage } from '../controllers/auth.controllers.js';
 
 const authRouter = express.Router();
 
-authRouter.get("/home", renderHomePage);
-authRouter.get("/register", getRegisterPage);
-authRouter.get("/login", getLoginPage);
-authRouter.post("/login", login)
+authRouter.get("/", renderHomePage);
 
+authRouter.route("/register").get(getRegisterPage).post(register);
+authRouter.route("/login").get(getLoginPage).post(login)
 
 
 export default authRouter;
