@@ -6,6 +6,8 @@ import { loadLinks } from "../services/urlshortner.services.js"
 import { loginUserSchema, registerUserSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
+    if (!req.user) return res.redirect("/login")
+
     const links = await loadLinks(req.user?.id)
     const errors = req.flash("errors")
     const success = req.flash("success")
@@ -26,15 +28,14 @@ export const getLoginPage = async (req, res) => {
 
 export const register = async (req, res) => {
 
-    if (req.user) return res.redirect("/")
-
+    // if (req.user) return res.redirect("/")
 
     const result = registerUserSchema.safeParse(req.body);
 
     // here safeParse function (in result has two properties data and error)
 
     if (!result.success) {
-        const errors = result.error.issues.map(err => err.message).join(", ");
+        const errors = result.error.issues.map(err => err.message);
         req.flash("errors", errors)
         return res.redirect("/register")
     }
@@ -62,14 +63,14 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     // res.setHeader("Set-Cookie", "isLoggedIn=true; path=/;")
 
-    if (req.user) return res.redirect("/")
+    // if (req.user) return res.redirect("/")
 
     // zod validation
 
     const result = loginUserSchema.safeParse(req.body);
 
     if (!result.success) {
-        const errors = result.error.issues.map(err => err.message).join(", ")
+        const errors = result.error.issues.map(err => err.message);
         req.flash("errors", errors)
         return res.redirect("/login")
     }
@@ -100,7 +101,7 @@ export const login = async (req, res) => {
 
     res.cookie("access_token", token)
 
-    res.render("home")
+    res.redirect("/")
 }
 
 export const getMe = async (req, res) => {

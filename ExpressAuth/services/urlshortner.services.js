@@ -20,3 +20,21 @@ export const getLinkByShortCode = async (shortCode) => {
     const [result] = await db.select().from(shortLink).where(eq(shortLink.shortCode, shortCode))
     return result
 }
+
+export const findShortlinkById = async (id) => {
+
+    console.log("ID", id)
+
+    const [result] = await db.select().from(shortLink).where(eq(shortLink.id, id))
+    return result;
+
+}
+
+export const updateShortLinkById = async (id, data) => {
+
+    return await db.update(shortLink)
+        .set({
+            url: data.url,
+            shortCode: data.shortCode
+        }).where(eq(shortLink.id, id))
+}
