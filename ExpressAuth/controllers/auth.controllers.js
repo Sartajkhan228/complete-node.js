@@ -3,6 +3,7 @@ import {
     createUser, generateToken, getUserByEmail, hashPassword
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
+import { loginUserSchema, registerUserSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
     const links = await loadLinks(req.user?.id)
@@ -27,7 +28,19 @@ export const register = async (req, res) => {
 
     if (req.user) return res.redirect("/")
 
-    const { name, email, password } = req.body;
+
+    const result = registerUserSchema.safeParse(req.body);
+
+    // here safeParse function (in result has two properties data and error)
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message).join(", ");
+        req.flash("errors", errors)
+        return res.redirect("/register")
+    }
+
+    const { name, email, password } = result.data;
+
 
     const user = await getUserByEmail(email)
 
@@ -51,7 +64,17 @@ export const login = async (req, res) => {
 
     if (req.user) return res.redirect("/")
 
-    const { email, password } = req.body;
+    // zod validation
+
+    const result = loginUserSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message).join(", ")
+        req.flash("errors", errors)
+        return res.redirect("/login")
+    }
+
+    const { email, password } = result.data;
 
     const user = await getUserByEmail(email);
 

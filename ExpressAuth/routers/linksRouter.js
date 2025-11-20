@@ -5,7 +5,7 @@ import { postShortLink, redirectShortLink } from '../controllers/shortlink.contr
 
 const linkRouter = express.Router();
 
-linkRouter.post("/", postShortLink);
+linkRouter.post("/link", postShortLink);
 linkRouter.get("/:shortCode", redirectShortLink);
 
 

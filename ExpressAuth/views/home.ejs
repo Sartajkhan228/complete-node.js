@@ -17,7 +17,7 @@
   <!-- NAVBAR -->
   <nav class="bg-blue-600 text-white py-4 shadow-md">
     <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold">My App</h1>
+      <h1 class="text-2xl font-bold">Url Shortner</h1>
       <div class="space-x-6">
         <a href="/login" class="text-white hover:text-gray-200 font-medium">Login</a>
         <a href="/register" class="text-white hover:text-gray-200 font-medium">Register</a>
@@ -30,10 +30,12 @@
   <main class="flex-grow flex justify-center items-center px-4">
     <div class="bg-white p-10 rounded-xl shadow-lg max-w-xl text-center">
 
-      <h2 class="text-3xl font-bold text-blue-600">Welcome <%= user?.name %> to the Home Page</h2>
+      <h2 class="text-3xl font-bold text-blue-600 mb-7">Welcome, <span class="text-gray-600">
+          <%= user?.name %>
+        </span> to the Home Page</h2>
 
       <main class="flex flex-col gap-5">
-        <form action="/" method="POST" class="flex flex-col gap-3 w-full">
+        <form action="/link" method="POST" class="flex flex-col gap-3 w-full">
           <div class="flex flex-col text-start">
             <label class="font-semibold">Enter URL:</label>
             <input type="url" name="url" required class="border-2 border-gray-300 p-1 rounded-md mt-1">
@@ -64,7 +66,7 @@
         <div>
           <h3 class="text-start w-max font-bold">Shorter links</h3>
           <ul>
-            <% links.forEach(link=> { %>
+            <% links.reverse().forEach(link=> { %>
               <li class="flex items-center justify-between gap-2 mb-2">
                 <span class="text-blue-600">
                   http://localhost:5000/<%= link.shortCode %>
@@ -86,7 +88,7 @@
 
   <!-- FOOTER -->
   <footer class="bg-gray-200 text-center py-4 text-gray-600">
-    &copy; <%= new Date().getFullYear() %> My App. All rights reserved.
+    &copy; <%= new Date().getFullYear() %> Url Shortner. All rights reserved.
   </footer>
 
 
