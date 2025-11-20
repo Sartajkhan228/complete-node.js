@@ -1,11 +1,22 @@
 import { getLinkByShortCode, insertShortLink, loadLinks } from "../services/urlshortner.services.js";
 import crypto from 'crypto';
+import { linkValidationSchema } from "../validators/auth.validators.js";
 
 
 export const postShortLink = async (req, res) => {
 
     try {
-        const { url, shortCode } = req.body;
+
+        // zod validation
+        const result = linkValidationSchema.safeParse(req.body);
+
+        if (!result.success) {
+            const error = result.error.issues.map(err => err.message).join(", ")
+            req.flash("errors", error)
+            res.redirect("/")
+        }
+
+        const { url, shortCode } = result.data;
         const userId = req.user?.id
 
         const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
