@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,31 +9,32 @@
     <!-- Tailwind CDN (optional) -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="w-full max-w-md bg-white p-6 rounded-lg shadow">
 
         <h1 class="text-2xl font-bold mb-4 text-center">Create Account</h1>
 
-     
+
         <form action="/register" method="POST" class="space-y-4">
 
             <div class="flex flex-col gap-3">
-                <input type="text" name="name" placeholder="Full Name"
-                class="w-full border px-3 py-2 rounded" required>
-                
-                <input type="email" name="email" placeholder="Email"
-                class="w-full border px-3 py-2 rounded" required>
-                
-                <input type="password" name="password" placeholder="Password"
-                class="w-full border px-3 py-2 rounded" required>
-                
+                <input type="text" name="name" placeholder="Full Name" class="w-full border px-3 py-2 rounded" required>
+
+                <input type="email" name="email" placeholder="Email" class="w-full border px-3 py-2 rounded" required>
+
+                <input type="password" name="password" placeholder="Password" class="w-full border px-3 py-2 rounded"
+                    required>
+
                 <% if(errors && errors.length>0) { %>
                     <% errors.forEach((item)=>{%>
-                        <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600"><%= item %></p>
+                        <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600">
+                            <%= item %>
+                        </p>
                         <% }) %>
-                        <% } %>
-             </div>
+                            <% } %>
+            </div>
             <button class="w-full bg-blue-600 text-white py-2 rounded-md font-semibold">
                 Register
             </button>
@@ -48,4 +50,5 @@
     </div>
 
 </body>
+
 </html>

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import { verifyAuthentication } from './middlewares/verify-auth-middleware.js';
 import session from 'express-session';
 import flash from 'connect-flash';
+import linkRouter from './routers/linksRouter.js';
 
 
 const app = express()
@@ -25,11 +26,12 @@ app.use(verifyAuthentication)
 app.use((req, res, next) => {
     res.locals.user = req.user
 
-    return next()
+    next()
 })
 
 
 app.use("/", authRouter)
+app.use("/", linkRouter)
 
 
 const port = process.env.PORT

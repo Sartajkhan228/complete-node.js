@@ -2,9 +2,14 @@ import {
     compareHashedPassword,
     createUser, generateToken, getUserByEmail, hashPassword
 } from "../services/auth.services.js"
+import { loadLinks } from "../services/urlshortner.services.js"
 
 export const renderHomePage = async (req, res) => {
-    res.render("home")
+    const links = await loadLinks(req.user?.id)
+    const errors = req.flash("errors")
+    const success = req.flash("success")
+
+    res.render("home", { links, errors, success })
 }
 
 export const getRegisterPage = async (req, res) => {

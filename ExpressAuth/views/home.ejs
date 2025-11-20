@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,8 @@
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -26,22 +29,57 @@
   <!-- MAIN CONTENT -->
   <main class="flex-grow flex justify-center items-center px-4">
     <div class="bg-white p-10 rounded-xl shadow-lg max-w-xl text-center">
-      <% if(user) { %>
-        <h3>Welcome <%= user.name %></h3>
-      <% }else{ %>
-      <h4>You are not logged in</h4>
-      <% } %>
 
-      <h2 class="text-3xl font-bold text-blue-600">Welcome to the Home Page</h2>
+      <h2 class="text-3xl font-bold text-blue-600">Welcome <%= user?.name %> to the Home Page</h2>
 
-      <p class="text-gray-700 text-lg mt-4 leading-relaxed">
-        This is the homepage of your Node.js + EJS authentication application built using TailwindCSS.
-      </p>
+      <main class="flex flex-col gap-5">
+        <form action="/" method="POST" class="flex flex-col gap-3 w-full">
+          <div class="flex flex-col text-start">
+            <label class="font-semibold">Enter URL:</label>
+            <input type="url" name="url" required class="border-2 border-gray-300 p-1 rounded-md mt-1">
+          </div>
 
-      <a href="/login"
-         class="inline-block mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition">
-        Get Started
-      </a>
+          <div class="flex flex-col text-start">
+            <label class="font-semibold">Custom Short Code (optional):</label>
+            <input type="text" name="shortCode" class="border-2 border-gray-300 p-1 rounded-md mt-1">
+          </div>
+
+          <% if(errors && errors.length>0) { %>
+            <% errors.forEach((item)=>{%>
+              <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600">
+                <%= item %>
+              </p>
+              <% }) %>
+                <% } %>
+
+                  <% if (success.length) { %>
+                    <p class="text-green-600">
+                      <%= success[0] %>
+                    </p>
+                    <% } %>
+
+                      <button type="submit"
+                        class="px-5 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-900 transition-all duration-300 ease-in-out">Shorten</button>
+        </form>
+        <div>
+          <h3 class="text-start w-max font-bold">Shorter links</h3>
+          <ul>
+            <% links.forEach(link=> { %>
+              <li class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-blue-600">
+                  http://localhost:5000/<%= link.shortCode %>
+                </span>
+                <button class="copy-btn bg-gray-200 px-3 py-1 rounded-md"
+                  data-link="http://localhost:5000/<%= link.shortCode %>">
+                  <i class="fa-solid fa-copy"></i>
+                </button>
+              </li>
+              <% }) %>
+          </ul>
+
+        </div>
+      </main>
+
 
     </div>
   </main>
@@ -51,5 +89,25 @@
     &copy; <%= new Date().getFullYear() %> My App. All rights reserved.
   </footer>
 
+
+  <script>
+
+    const copyButtons = document.querySelectorAll(".copy-btn");
+
+    copyButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const link = button.dataset.link;
+        navigator.clipboard.writeText(link)
+          .then(() => {
+            alert("copied " + link);
+          })
+          .catch((error) => {
+            console.log("Error to copy", error)
+          })
+      })
+    })
+  </script>
+
 </body>
+
 </html>
