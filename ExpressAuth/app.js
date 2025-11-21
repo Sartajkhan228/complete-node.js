@@ -2,6 +2,7 @@ import express from 'express'
 import authRouter from './routers/authRouters.js'
 import cookieParser from 'cookie-parser'
 import { verifyAuthentication } from './middlewares/verify-auth-middleware.js';
+import requestIp from "request-ip"
 import session from 'express-session';
 import flash from 'connect-flash';
 import linkRouter from './routers/linksRouter.js';
@@ -20,6 +21,11 @@ app.use(cookieParser());
 // to hangle errors
 app.use(session({ secret: "my-secret", resave: true, saveUninitialized: false }));
 app.use(flash());
+
+
+// this is the middleware due to this middleware we able to call req.clientIp method anywhere;
+// this is very usefull middleware used to get the ip of the user;
+app.use(requestIp.mw());
 
 // middleware
 app.use(verifyAuthentication)
