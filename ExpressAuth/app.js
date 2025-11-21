@@ -32,9 +32,9 @@ app.use((req, res, next) => {
 app.use("/", authRouter);
 app.use("/", linkRouter);
 
-app.use((req, res) => {
-    res.render("404")
-});
+// app.use((req, res) => {
+//     res.render("404")
+// });
 
 const port = process.env.PORT
 

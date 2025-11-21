@@ -1,4 +1,4 @@
-import { findShortlinkById, getLinkByShortCode, insertShortLink, loadLinks, updateShortLinkById } from "../services/urlshortner.services.js";
+import { deleteSelectedId, findShortlinkById, getLinkByShortCode, insertShortLink, loadLinks, updateShortLinkById } from "../services/urlshortner.services.js";
 import crypto from 'crypto';
 import { linkValidationSchema } from "../validators/auth.validators.js";
 import z from "zod";
@@ -55,6 +55,7 @@ export const redirectShortLink = async (req, res) => {
 
 }
 
+// updating user with the id:
 
 export const updateShortLink = async (req, res) => {
 
@@ -94,6 +95,12 @@ export const updateShortLink = async (req, res) => {
             req.flash("errors", "Shortcode already exits, Please chose anoter one!")
             return res.redirect(`/update/${id}`)
         }
+        // checking for no update:
+        const noChange = allLinks.find((link) => link.shortCode === shortCode && link.url === url)
+        if (noChange) {
+            return res.redirect("/")
+        }
+
 
         await updateShortLinkById(id, { url, shortCode });
 
@@ -108,6 +115,7 @@ export const updateShortLink = async (req, res) => {
 
 }
 
+// rendering update page for specific user:
 
 export const getShortlinkUpdatePage = async (req, res) => {
 
@@ -138,4 +146,31 @@ export const getShortlinkUpdatePage = async (req, res) => {
         return res.status(500).send("Internal server error")
     }
 
+}
+
+// delete id:
+
+export const deleteShortlink = async (req, res) => {
+
+    if (!req.user) return res.redirect("/login")
+
+    const result = z.coerce.number().int().safeParse(req.params.id)
+
+    if (!result.success) {
+        return res.status(404).render("404")
+    }
+
+    const id = result.data;
+
+    try {
+
+        await deleteSelectedId(id);
+        req.flash("success", "Link deleted successfully!")
+        res.redirect("/")
+
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send("Internal server error")
+    }
 }

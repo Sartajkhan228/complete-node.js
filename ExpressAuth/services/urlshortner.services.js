@@ -36,3 +36,8 @@ export const updateShortLinkById = async (id, data) => {
             shortCode: data.shortCode
         }).where(eq(shortLink.id, id))
 }
+
+export const deleteSelectedId = async (id) => {
+
+    return await db.delete(shortLink).where(eq(shortLink.id, id))
+}

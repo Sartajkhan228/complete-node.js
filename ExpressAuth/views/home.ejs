@@ -19,9 +19,12 @@
     <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold">Url Shortner</h1>
       <div class="space-x-6">
-        <a href="/login" class="text-white hover:text-gray-200 font-medium">Login</a>
-        <a href="/register" class="text-white hover:text-gray-200 font-medium">Register</a>
-        <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
+        <% if(!user) { %>
+          <a href="/login" class="text-white hover:text-gray-200 font-medium">Login</a>
+          <a href="/register" class="text-white hover:text-gray-200 font-medium">Register</a>
+          <% } else{ %>
+            <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
+            <% } %>
       </div>
     </div>
   </nav>
@@ -81,6 +84,12 @@
                       <i class="fa-solid fa-edit"></i>
                     </a>
                   </button>
+                  <form action="/delete/<%= link.id %>" method="POST" class="inline">
+                    <button class="bg-gray-200 px-3 py-1 rounded-md">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+
                 </span>
               </li>
               <% }) %>
@@ -101,7 +110,7 @@
 
   <script>
 
-    const copyButtons = document.getElementsByClassName(".copy-btn");
+    const copyButtons = document.querySelectorAll(".copy-btn");
 
     copyButtons.forEach(button => {
       button.addEventListener("click", () => {
