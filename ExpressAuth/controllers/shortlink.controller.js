@@ -60,15 +60,7 @@ export const updateShortLink = async (req, res) => {
 
     if (!req.user) return res.redirect("/login")
 
-    const result = linkValidationSchema.safeParse(req.body);
-
-    if (!result.success) {
-        const error = result.error.issues.map(err => err.message).join(", ")
-        req.flash("errors", error)
-        res.redirect("/")
-    }
-
-    const { url, shortCode } = result.data;
+    // validation
 
     const idResult = z.coerce.number().int().safeParse(req.params.id);
 
@@ -77,6 +69,17 @@ export const updateShortLink = async (req, res) => {
     }
 
     const id = idResult.data
+
+    const result = linkValidationSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const error = result.error.issues.map(err => err.message).join(", ")
+        req.flash("errors", error)
+        res.redirect(`/update/${id}`)
+    }
+
+    const { url, shortCode } = result.data;
+
 
     try {
         const existingShortlink = await findShortlinkById(id);
@@ -88,7 +91,7 @@ export const updateShortLink = async (req, res) => {
         const sameLink = allLinks.find((link) => link.shortCode === shortCode && link.id !== id)
 
         if (sameLink) {
-            res.flash("errors", "Shortcode already exits, Please chose anoter one")
+            req.flash("errors", "Shortcode already exits, Please chose anoter one!")
             return res.redirect(`/update/${id}`)
         }
 
@@ -119,7 +122,6 @@ export const getShortlinkUpdatePage = async (req, res) => {
 
     try {
         const shortLink = await findShortlinkById(result.data)
-        console.log("shortLink", shortLink)
         if (!shortLink) return res.status(404).send("Page not found")
 
 

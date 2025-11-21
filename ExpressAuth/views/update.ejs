@@ -48,8 +48,16 @@
                             class="border-2 border-gray-300 p-1 rounded-md mt-1">
                     </div>
 
-                    <button type="submit"
-                        class="px-5 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-900 transition-all duration-300 ease-in-out">Update</button>
+                    <% if(errors && errors.length>0) { %>
+                        <% errors.forEach((item)=>{%>
+                            <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600">
+                                <%= item %>
+                            </p>
+                            <% }) %>
+                                <% } %>
+
+                                    <button type="submit"
+                                        class="px-5 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-900 transition-all duration-300 ease-in-out">Update</button>
                 </form>
 
             </main>
