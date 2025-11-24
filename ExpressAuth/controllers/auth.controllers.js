@@ -67,7 +67,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     // res.setHeader("Set-Cookie", "isLoggedIn=true; path=/;")
 
-    // if (req.user) return res.redirect("/")
+    if (req.user) return res.redirect("/")
 
     // zod validation
 
@@ -150,7 +150,8 @@ export const getMe = async (req, res) => {
 
 export const logout = async (req, res) => {
 
-    res.clearCookie("access_token")
+    res.clearCookie("access_token", "refresh_token")
 
     res.redirect("/login")
 }
+
