@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+</head>
+
+<body>
+
+    <main>
+        <h1>Your profile</h1>
+        <div>
+            <div class="bg-cyan-300">
+                <div class="w-40 h-40 rounded-full border-2 border-gray-300">
+                </div>
+                <div class="flex flex-col gap-3">
+                    <span>
+                        <h3>
+                            <%= user.name %>
+                        </h3>
+                    </span>
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-email"></i>
+                        <h5>
+
+                        </h5>
+                    </span>
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-date"></i>
+                        <h5>
+
+                        </h5>
+                    </span>
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    link created
+                </div>
+                <div>
+                    Total clicks
+                </div>
+                <div>
+                    Last active
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+
+</html>

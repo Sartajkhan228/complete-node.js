@@ -5,7 +5,8 @@ import {
     createAccessToken,
     createRefreshToken,
     createSession,
-    createUser, getUserByEmail, hashPassword
+    createUser, findUserById, getUserByEmail, hashPassword,
+    userShortLinks
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
 import { loginUserSchema, registerUserSchema } from "../validators/auth.validators.js"
@@ -57,9 +58,37 @@ export const register = async (req, res) => {
 
     const hashedPassword = await hashPassword(password)
 
-    await createUser({ name, email, password: hashedPassword });
+    const newUser = await createUser({ name, email, password: hashedPassword });
 
-    res.redirect("/login")
+    // res.redirect("/login")
+
+    const session = await createSession(newUser.id, {
+        ip: req.clientId,
+        userAgent: req.header("user_agent")
+    })
+
+    const accessToken = createAccessToken({
+        id: newUser.id,
+        name: name,
+        email: email,
+        sessionId: session.id
+    })
+
+    const refreshToken = createRefreshToken(session.id);
+
+    const configData = { httpOnly: true, secure: true }
+
+    res.cookie("access_token", accessToken, {
+        ...configData,
+        maxAge: ACCESS_TOKEN_EXPIRY
+    })
+
+    res.cookie("refresh_token", refreshToken, {
+        ...configData,
+        maxAge: REFRESH_TOKEN_EXPIRY
+    })
+
+    res.redirect("/")
 
 }
 
@@ -138,6 +167,30 @@ export const login = async (req, res) => {
     })
 
     res.redirect("/")
+};
+
+
+export const getProfile = async (req, res) => {
+
+    if (!req.user) return res.redirect("/login")
+
+    const user = await findUserById(req.user.id)
+
+    if (!user) {
+        console.log("User not found")
+    }
+
+    const getUserShortLinks = await userShortLinks(user.id)
+
+    res.render("profile", {
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            createdAt: user.createdAt,
+            links: getUserShortLinks
+        }
+    })
 }
 
 export const getMe = async (req, res) => {
@@ -146,6 +199,8 @@ export const getMe = async (req, res) => {
 
     res.send(`<h1> Hey! ${req.user.name} - ${req.user.email}</h1>`)
 }
+
+
 
 // Logout
 
@@ -158,4 +213,7 @@ export const logout = async (req, res) => {
 
     res.redirect("/login")
 }
+
+
+
 
