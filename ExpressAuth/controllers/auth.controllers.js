@@ -1,5 +1,6 @@
 import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../config/constants.js"
 import {
+    clearUserSessionId,
     compareHashedPassword,
     createAccessToken,
     createRefreshToken,
@@ -150,7 +151,10 @@ export const getMe = async (req, res) => {
 
 export const logout = async (req, res) => {
 
-    res.clearCookie("access_token", "refresh_token")
+    await clearUserSessionId(req.user.sessionId)
+
+    res.clearCookie("access_token")
+    res.clearCookie("refresh_token")
 
     res.redirect("/login")
 }
