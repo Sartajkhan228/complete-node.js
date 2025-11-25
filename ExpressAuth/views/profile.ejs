@@ -11,46 +11,69 @@
 
 </head>
 
-<body>
+<body class="min-h-screen flex items-center justify-center">
 
-    <main>
-        <h1>Your profile</h1>
-        <div>
-            <div class="bg-cyan-300">
-                <div class="w-40 h-40 rounded-full border-2 border-gray-300">
+    <main class="w-[600px]">
+        <button
+            class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+            <a href="/" class="text-white hover:text-gray-200 font-medium">Home</a>
+        </button>
+        <h1 class="text-center text-3xl py-5">Your profile</h1>
+        <div class="border-2 rounded-md overflow-hidden">
+            <div class="bg-cyan-300 flex items-center gap-5 p-5">
+                <div
+                    class="w-20 h-20 rounded-full border-4 border-gray-300 font-bold text-3xl flex items-center justify-center">
+                    <%= user.name.charAt(0).toUpperCase() %>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <span>
-                        <h3>
-                            <%= user.name %>
-                        </h3>
-                    </span>
+                    <h1 class="font-bold">
+                        <%= user.name %>
+                    </h1>
                     <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-email"></i>
+                        <i class="fa-solid fa-envelope"></i>
                         <h5>
-
+                            <%= user.email %>
                         </h5>
                     </span>
                     <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-date"></i>
+                        <i class="fa-solid fa-calendar"></i>
                         <h5>
-
+                            <%= new Date(user.createdAt).toLocaleDateString() %>
                         </h5>
                     </span>
                 </div>
             </div>
-            <div class="flex items-center justify-between">
-                <div>
+            <div class="flex items-center justify-between p-3">
+                <div class="flex flex-col items-center font-semibold">
+                    <span>
+                        <%= user.links? user.links.length:0 %>
+                    </span>
                     link created
                 </div>
-                <div>
+                <div class=" flex flex-col items-center font-semibold">
+                    <span>
+                        3
+                    </span>
                     Total clicks
                 </div>
-                <div>
+                <div class=" flex flex-col items-center font-semibold">
+                    <span>
+                        10m ago
+                    </span>
                     Last active
                 </div>
             </div>
 
+        </div>
+        <div class="flex items-center justify-around mt-3">
+            <button
+                class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">verify</button>
+            <button
+                class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">learnmore</button>
+            <button
+                class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
+            </button>
         </div>
     </main>
 

@@ -24,7 +24,25 @@ export const compareHashedPassword = async ({ hashedPassword, password }) => {
 
 export const createUser = async ({ name, email, password }) => {
 
-    const [user] = await db.insert(usersTable).values({ name, email, password }).$returningId();
+    // const [user] = await db.insert(usersTable).values({ name, email, password });
+    // console.log("CREATED USER", user)
+    // return user;
+
+    // 1. Insert user and get insertId
+    const result = await db.insert(usersTable).values({
+        name,
+        email,
+        password
+    });
+
+    const insertId = result[0].insertId; // <-- MySQL auto-increment ID
+
+    // 2. Fetch full user row
+    const [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, insertId));
+
     return user;
 
 }
@@ -40,7 +58,6 @@ export const createUser = async ({ name, email, password }) => {
 export const createSession = async (userId, { ip, userAgent }) => {
 
     const [result] = await db.insert(sessionsTable).values({ userId, ip, userAgent }).$returningId();
-    console.log("RESULT FROM SESSION", result)
 
     return result;
 
@@ -79,7 +96,7 @@ export const findSessionById = async (sessionId) => {
 
 // findUserById
 export const findUserById = async (userId) => {
-    const [user] = await db.select().from(usersTable).where(usersTable.id, userId);
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
 
     return user;
 }
@@ -136,7 +153,7 @@ export const clearUserSessionId = async (sessionId) => {
 
 export const userShortLinks = async (userId) => {
 
-    const [links] = await db.select().from(shortLink).where(shortLink.userId, userId);
+    const links = await db.select().from(shortLink).where(eq(shortLink.userId, userId));
 
     return links;
 
