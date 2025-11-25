@@ -1,6 +1,6 @@
 
 import { int, mysqlTable, varchar, timestamp, boolean, text } from 'drizzle-orm/mysql-core';
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 
 export const usersTable = mysqlTable("users", {
@@ -24,6 +24,14 @@ export const sessionsTable = mysqlTable("sessions", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull()
 })
+
+export const emailVerificationTokens = mysqlTable("email_verification_tokens", {
+    id: int().autoincrement().primaryKey(),
+    userId: int("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    token: varchar({ length: 8 }).notNull(),
+    expiresAt: timestamp("expires_at").default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull()
+});
 
 export const shortLink = mysqlTable('short_link', {
     id: int().autoincrement().primaryKey(),

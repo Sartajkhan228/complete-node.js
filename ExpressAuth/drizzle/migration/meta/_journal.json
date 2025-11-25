@@ -15,6 +15,13 @@
       "when": 1764061826887,
       "tag": "0001_woozy_tyrannus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1764068339934,
+      "tag": "0002_concerned_madame_web",
+      "breakpoints": true
     }
   ]
 }

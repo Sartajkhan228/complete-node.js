@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_EXPIRY, MILLISECONDS_PER_SECOND, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 import { db } from "../config/db.js"
 import { sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
-import { eq } from "drizzle-orm"
+import { eq, is } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
 
@@ -124,6 +124,7 @@ export const refreshTokens = async (refreshToken) => {
             id: user.id,
             name: user.name,
             email: user.email,
+            isEmailVerified: user.isEmailVerified,
             sessionId: currentSession.id
         }
 

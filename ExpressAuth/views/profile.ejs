@@ -19,6 +19,25 @@
             <a href="/" class="text-white hover:text-gray-200 font-medium">Home</a>
         </button>
         <h1 class="text-center text-3xl py-5">Your profile</h1>
+
+        <div class="my-3">
+            <% if(user.isEmailVerified) { %>
+                <span class="flex items-center justify-between">
+                    <i class="fa-solid fa-circle-check text-green-500">
+                        Verified
+                    </i>
+                    <% } else { %>
+                        <span class="flex items-center justify-between">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow-500">
+                                Not verified
+                            </i>
+                            <button class="px-3 py-1 border rounded bg-blue-600 text-white font-semibold">verify
+                                now</button>
+                        </span>
+
+                        <% } %>
+        </div>
+
         <div class="border-2 rounded-md overflow-hidden">
             <div class="bg-cyan-300 flex items-center gap-5 p-5">
                 <div
@@ -75,6 +94,8 @@
                 <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
             </button>
         </div>
+
+
     </main>
 
 </body>
