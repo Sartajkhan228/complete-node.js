@@ -22,17 +22,19 @@
 
         <div class="my-3">
             <% if(user.isEmailVerified) { %>
-                <span class="flex items-center justify-between">
+                <span class="flex items-center justify-between text-sm">
                     <i class="fa-solid fa-circle-check text-green-500">
                         Verified
                     </i>
                     <% } else { %>
-                        <span class="flex items-center justify-between">
+                        <span class="flex items-center justify-between text-sm">
                             <i class="fa-solid fa-triangle-exclamation text-yellow-500">
                                 Not verified
                             </i>
-                            <button class="px-3 py-1 border rounded bg-blue-600 text-white font-semibold">verify
-                                now</button>
+                            <button
+                                class="px-3 py-2 border rounded bg-blue-600 text-white font-semibold hover:bg-blue-900 transition-all duration-300 ease-in-out">
+                                <a href="/verify-email"> verify now</a>
+                            </button>
                         </span>
 
                         <% } %>

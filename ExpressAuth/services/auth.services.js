@@ -1,9 +1,10 @@
 import { ACCESS_TOKEN_EXPIRY, MILLISECONDS_PER_SECOND, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 import { db } from "../config/db.js"
-import { sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
-import { eq, is } from "drizzle-orm"
+import { emailVerificationTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
+import { eq, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
+import crypto from "crypto";
 
 
 export const getUserByEmail = async (email) => {
@@ -88,8 +89,6 @@ export const verifyJwtToken = (token) => {
 
 export const findSessionById = async (sessionId) => {
     const [session] = await db.select().from(sessionsTable).where(eq(sessionsTable.id, sessionId));
-
-    console.log("SESSION", session)
 
     return session;
 }
@@ -191,4 +190,62 @@ export const userShortLinks = async (userId) => {
 //         maxAge: REFRESH_TOKEN_EXPIRY
 //     })
 // }
+
+
+
+export const generateRandomToken = (digit = 8) => {
+
+    const min = 10 ** (digit - 1);
+    const max = 10 ** digit;
+
+    return crypto.randomInt(min, max).toString();
+
+}
+
+
+export const createEmailVerificationToken = async ({ userId, token }) => {
+
+    return db.transaction(async (tx) => {
+        try {
+            // to delete expired tokens:
+            await tx
+                .delete(emailVerificationTokens)
+                .where(lt(emailVerificationTokens.expiresAt, sql`CURRENT_TIMESTAMP`));
+
+            // delete existing tokens for the user
+            await tx
+                .delete(emailVerificationTokens)
+                .where(eq(emailVerificationTokens.userId, userId));
+
+            // insert new token
+            await tx
+                .insert(emailVerificationTokens).values({ userId, token })
+
+        } catch (error) {
+            console.log("Error", error)
+            throw new Error("Unable to create verification token");
+
+        }
+    })
+}
+
+// export const createEmailVerificationLink = async ({ email, token }) => {
+
+//     const urlEncodedEmail = encodeURIComponent(email);
+//     return `${process.env.BASE_URL}/verify-email?email=${urlEncodedEmail}&token=${token}`;
+
+
+// }
+
+
+export const createEmailVerificationLink = async ({ email, token }) => {
+
+    // const urlEncodedEmail = encodeURIComponent(email);
+    // return `${process.env.BASE_URL}/verify-email?email=${urlEncodedEmail}&token=${token}`;
+
+    const urlApi = new URL(`${process.env.BASE_URL}/verify-email`);
+    urlApi.searchParams.append("token", token)
+    urlApi.searchParams.append("email", email)
+    return urlApi.toString();
+}
 

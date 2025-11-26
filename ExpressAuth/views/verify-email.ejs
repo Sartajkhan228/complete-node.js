@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+</head>
+
+<body class="min-h-screen flex items-center justify-center">
+
+    <main class="w-[600px]">
+        <button
+            class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+            <a href="/" class="text-white hover:text-gray-200 font-medium">Home</a>
+        </button>
+        <h1 class="text-center text-3xl py-5">Verify your email</h1>
+
+        <div class="rounded-md overflow-hidden">
+            <div class="bg-cyan-300 flex items-center gap-5 p-5">
+                <div class="flex flex-col gap-3">
+
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-envelope"></i>
+                        <h5>
+                            <%= email %>
+                        </h5>
+                    </span>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-3">
+                <p class="font-semibold text-sm">Your Email has not been verified yet. Please verify your email by
+                    entering
+                    8-digits code or request a
+                    new verification link.</p>
+            </div>
+
+            <div class="flex items-center justify-end mt-3">
+                <form action="/resend-verification" method="get">
+                    <button type="submit"
+                        class="px-7 py-2 rounded-md font-semibold bg-gray-600 text-white hover:bg-gray-900  transition-all duration-300 ease-in-out">
+                        Resend Verification Email
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <input type="text" placeholder="Enter 8-digit code" class="w-full border px-3 py-2 rounded mt-4 mb-2">
+            <div class="flex items-center mt-3">
+                <form action="/verify-email-token" method="get"></form>
+                <button
+                    class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                    Verify Code
+                </button>
+            </div>
+
+
+    </main>
+
+</body>
+
+</html>

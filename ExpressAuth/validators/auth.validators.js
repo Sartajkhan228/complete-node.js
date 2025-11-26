@@ -36,6 +36,15 @@ export const linkValidationSchema = z.object({
         .min(3, { message: "Short code must be minimum of 3 characters" })
 })
 
+export const emailVerificationSchema = z.object({
+    token: z.string()
+        .trim()
+        .length(8),
+    email: z.string()
+        .trim()
+        .email()
+});
+
 
 
 

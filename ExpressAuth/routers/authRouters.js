@@ -1,5 +1,5 @@
 import express from 'express'
-import { getLoginPage, getMe, getRegisterPage, login, logout, register, renderHomePage, getProfile } from '../controllers/auth.controllers.js';
+import { getLoginPage, getMe, getRegisterPage, login, logout, register, renderHomePage, getProfile, verifyEmail, resendVerificationEmail, verifyEmailToken } from '../controllers/auth.controllers.js';
 
 const authRouter = express.Router();
 
@@ -11,6 +11,9 @@ authRouter.get("/", renderHomePage);
 authRouter.route("/me").get(getMe);
 
 authRouter.route("/profile").get(getProfile);
+authRouter.route("/verify-email").get(verifyEmail);
+authRouter.route("/resend-verification").get(resendVerificationEmail);
+authRouter.route("/verify-email-token").get(verifyEmailToken);
 authRouter.route("/logout").get(logout)
 
 
