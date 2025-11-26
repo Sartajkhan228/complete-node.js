@@ -5,6 +5,11 @@ import { and, eq, gt, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
 import crypto from "crypto";
+import { sendEmail } from "../lib/nodemailer.js";
+import fs from "fs/promises";
+import path from "path";
+import ejs from "ejs";
+import mjml2html from "mjml";
 
 
 export const getUserByEmail = async (email) => {
@@ -243,50 +248,63 @@ export const createEmailVerificationLink = async ({ email, token }) => {
     // const urlEncodedEmail = encodeURIComponent(email);
     // return `${process.env.BASE_URL}/verify-email?email=${urlEncodedEmail}&token=${token}`;
 
-    const urlApi = new URL(`${process.env.BASE_URL}/verify-email`);
+    const urlApi = new URL(`${process.env.BASE_URL}/verify-email-token`);
     urlApi.searchParams.append("token", token)
     urlApi.searchParams.append("email", email)
     return urlApi.toString();
 }
 
 
-// findVerificationEmailToken
+// findVerificationEmailToken without joins:
 
-export const findVerificationEmailToken = async ({ token, email }) => {
+// export const findVerificationEmailToken = async ({ token, email }) => {
 
-    const tokenData = await db.select({
-        userId: emailVerificationTokens.userId,
+//     const tokenData = await db.select({
+//         userId: emailVerificationTokens.userId,
+//         token: emailVerificationTokens.token,
+//         expiresAt: emailVerificationTokens.expiresAt
+
+//     }).from(emailVerificationTokens).where(
+//         and(
+//             eq(emailVerificationTokens.token, token),
+//             gt(emailVerificationTokens.expiresAt, sql`NOW()`)
+//         )
+//     );
+
+//     if (!tokenData || tokenData.length === 0) {
+//         return null;
+//     }
+
+//     const userId = tokenData[0].userId;
+
+//     const userData = await db.select({ userId: usersTable.id, email: usersTable.email }).from(usersTable).where(eq(usersTable.id, userId));
+
+//     if (!userData || userData.length === 0) {
+//         return null;
+//     }
+
+//     return {
+//         userId: userData[0].userId,
+//         token: tokenData[0].token,
+//         email: userData[0].email,
+//         expiresAt: tokenData[0].expiresAt
+//     }
+
+// }
+
+export const findVerificationEmailTokenWithJoin = async ({ token, email }) => {
+
+    return await db.select({
+        userId: usersTable.id,
+        email: usersTable.email,
         token: emailVerificationTokens.token,
-        expiresAt: emailVerificationTokens.expiresAt
-
-    }).from(emailVerificationTokens).where(
-        and(
+        expiresAt: emailVerificationTokens.expiresAt,
+    }).from(emailVerificationTokens)
+        .where(
             eq(emailVerificationTokens.token, token),
+            eq(usersTable.email, email),
             gt(emailVerificationTokens.expiresAt, sql`NOW()`)
-        )
-    );
-
-    console.log("TOKENDATA", tokenData)
-
-    if (!tokenData || tokenData.length === 0) {
-        return null;
-    }
-
-    const userId = tokenData[0].userId;
-
-    const userData = await db.select({ userId: usersTable.id, email: usersTable.email }).from(usersTable).where(eq(usersTable.id, userId));
-
-    if (!userData || userData.length === 0) {
-        return null;
-    }
-
-    return {
-        userId: userData[0].userId,
-        token: tokenData[0].token,
-        email: userData[0].email,
-        expiresAt: tokenData[0].expiresAt
-    }
-
+        ).innerJoin(usersTable, eq(emailVerificationTokens.userId, usersTable.id));
 }
 
 export const verifyUserEmailAndUpdate = async (email) => {
@@ -300,5 +318,44 @@ export const clearUserVerificationTokens = async (email) => {
     if (!user) return;
 
     await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id))
+}
+
+
+
+// send verification email
+
+export const sendVerificationEmail = async ({ userId, email }) => {
+
+    const randomToken = generateRandomToken();
+
+    await createEmailVerificationToken({
+        userId,
+        token: randomToken
+    })
+
+    const verifyEmailLink = await createEmailVerificationLink({
+        email: email,
+        token: randomToken
+    })
+
+    const mjmlTemplate = await fs.readFile(
+        path.join(import.meta.dirname, "..", "emails", "verify-email.mjml"), "utf-8"
+    );
+
+    const filledTemplate = ejs.render(mjmlTemplate, {
+        name: "userMean",
+        token: randomToken,
+        verifyLink: verifyEmailLink
+    })
+
+    const htmlOutput = mjml2html(filledTemplate).html;
+
+
+    sendEmail({
+        to: email,
+        subject: "Verify your email address",
+        html: htmlOutput
+    }).catch(console.error);
+
 }
 
