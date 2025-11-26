@@ -50,15 +50,20 @@
         </div>
 
         <div>
-            <input type="text" placeholder="Enter 8-digit code" class="w-full border px-3 py-2 rounded mt-4 mb-2">
-            <div class="flex items-center mt-3">
-                <form action="/verify-email-token" method="get"></form>
-                <button
-                    class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
-                    Verify Code
-                </button>
-            </div>
+            <form action="/verify-email-token" method="get">
+                <!-- include the email so the server can validate against the token -->
+                <input type="hidden" name="email" value="<%= email %>">
 
+                <input name="token" type="text" placeholder="Enter 8-digit code"
+                    class="w-full border px-3 py-2 rounded mt-4 mb-2">
+
+                <div class="flex items-center mt-3">
+                    <button type="submit"
+                        class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                        Verify Code
+                    </button>
+                </div>
+            </form>
 
     </main>
 

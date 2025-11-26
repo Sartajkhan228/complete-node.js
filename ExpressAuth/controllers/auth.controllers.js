@@ -2,14 +2,16 @@ import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../config/constants.j
 import { sendEmail } from "../lib/nodemailer.js"
 import {
     clearUserSessionId,
+    clearUserVerificationTokens,
     compareHashedPassword,
     createAccessToken,
     createEmailVerificationLink,
     createEmailVerificationToken,
     createRefreshToken,
     createSession,
-    createUser, findUserById, generateRandomToken, getUserByEmail, hashPassword,
-    userShortLinks
+    createUser, findUserById, findVerificationEmailToken, generateRandomToken, getUserByEmail, hashPassword,
+    userShortLinks,
+    verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
 import { emailVerificationSchema, loginUserSchema, registerUserSchema } from "../validators/auth.validators.js"
@@ -240,6 +242,8 @@ export const resendVerificationEmail = async (req, res) => {
         token: randomToken
     })
 
+    console.log("URL EMAIL", verifyEmailLink)
+
     sendEmail({
         to: req.user.email,
         subject: "Verify your email address",
@@ -259,14 +263,28 @@ export const resendVerificationEmail = async (req, res) => {
 export const verifyEmailToken = async (req, res) => {
     if (!req.user) return res.redirect("/login")
 
+    console.log("REQ.QUERY", req.query)
     const result = emailVerificationSchema.safeParse(req.query);
 
     if (!result.success) {
-        req.flash("errors", "Invalid verification link")
-        return res.redirect("/verify-email")
+        return res.send("Zod validation failed")
     }
 
     const { token, email } = result.data;
+
+    const verifyToken = await findVerificationEmailToken({ token, email });
+
+    if (!verifyToken) {
+        // req.flash("errors", "Invalid or expired verification link")
+        return res.send("Verification link is invalid or expired")
+    }
+
+    await verifyUserEmailAndUpdate(verifyToken.email);
+
+    await clearUserVerificationTokens(verifyToken.email);
+
+    res.redirect("/profile")
+
 }
 
 export const getMe = async (req, res) => {
@@ -289,7 +307,3 @@ export const logout = async (req, res) => {
 
     res.redirect("/login")
 }
-
-
-
-

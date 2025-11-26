@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_EXPIRY, MILLISECONDS_PER_SECOND, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 import { db } from "../config/db.js"
 import { emailVerificationTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
-import { eq, lt, sql } from "drizzle-orm"
+import { and, eq, gt, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
 import crypto from "crypto";
@@ -247,5 +247,58 @@ export const createEmailVerificationLink = async ({ email, token }) => {
     urlApi.searchParams.append("token", token)
     urlApi.searchParams.append("email", email)
     return urlApi.toString();
+}
+
+
+// findVerificationEmailToken
+
+export const findVerificationEmailToken = async ({ token, email }) => {
+
+    const tokenData = await db.select({
+        userId: emailVerificationTokens.userId,
+        token: emailVerificationTokens.token,
+        expiresAt: emailVerificationTokens.expiresAt
+
+    }).from(emailVerificationTokens).where(
+        and(
+            eq(emailVerificationTokens.token, token),
+            gt(emailVerificationTokens.expiresAt, sql`NOW()`)
+        )
+    );
+
+    console.log("TOKENDATA", tokenData)
+
+    if (!tokenData || tokenData.length === 0) {
+        return null;
+    }
+
+    const userId = tokenData[0].userId;
+
+    const userData = await db.select({ userId: usersTable.id, email: usersTable.email }).from(usersTable).where(eq(usersTable.id, userId));
+
+    if (!userData || userData.length === 0) {
+        return null;
+    }
+
+    return {
+        userId: userData[0].userId,
+        token: tokenData[0].token,
+        email: userData[0].email,
+        expiresAt: tokenData[0].expiresAt
+    }
+
+}
+
+export const verifyUserEmailAndUpdate = async (email) => {
+
+    return await db.update(usersTable).set({ isEmailVerified: true }).where(eq(usersTable.email, email))
+}
+
+export const clearUserVerificationTokens = async (email) => {
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+
+    if (!user) return;
+
+    await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id))
 }
 
