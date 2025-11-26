@@ -25,7 +25,15 @@ export const registerUserSchema = loginUserSchema.extend({
 
 });
 
+export const updateProfileSchema = z.object({
+    name: z.string().trim()
+        .min(3, { message: "Name must be minimum of three characters" })
+        .max(100, { message: "Name must be maximum of 100 characters" }),
 
+    email: z.string().trim()
+        .email({ message: "Email must be a valid email" })
+        .max(100, { message: "Email cannot exceed more than 100 characters" })
+});
 
 export const linkValidationSchema = z.object({
     url: z.string()

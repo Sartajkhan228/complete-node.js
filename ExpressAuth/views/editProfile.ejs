@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Welcome</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+
+    <!-- MAIN CONTENT -->
+    <main class=" bg-white p-10 rounded-xl shadow-lg min-w-[500px] text-center flex flex-col gap-7">
+        <div class="flex justify-start">
+            <button
+                class="px-1 rounded-md font-bold bg-blue-600 text-white hover:bg-blue-900  transition-all duration-300 ease-in-out">
+                <a href="/profile" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </button>
+        </div>
+
+        <span class="text-gray-600 font-semibold text-2xl mb-7">
+            Update Profile for,
+            <%= name %>
+        </span>
+
+        <main class="flex flex-col gap-5">
+
+            <form action="/edit-profile" method="post" class="flex flex-col gap-3 w-full">
+                <div class="flex flex-col text-start">
+                    <input type="email" name="email" value="<%= email %>" required
+                        class="border-2 border-gray-300 p-1 rounded-md mt-1">
+                </div>
+
+                <div class="flex flex-col text-start">
+                    <label class="font-semibold">Custom Short Code:</label>
+                    <input type="text" name="name" value="<%= name %>"
+                        class="border-2 border-gray-300 p-1 rounded-md mt-1">
+                </div>
+
+                <% if(errors && errors.length>0) { %>
+                    <% errors.forEach((item)=>{%>
+                        <p class="p-2 bg-red-50 text-red-600 font-semibold text-sm border-l-2 border-red-600">
+                            <%= item %>
+                        </p>
+                        <% }) %>
+                            <% } %>
+
+                                <button type="submit"
+                                    class="px-5 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-900 transition-all duration-300 ease-in-out">
+                                    Edit
+                                </button>
+            </form>
+        </main>
+    </main>
+</body>
+
+</html>

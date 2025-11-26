@@ -1,3 +1,4 @@
+import { email } from "zod"
 import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../config/constants.js"
 import {
     clearUserSessionId,
@@ -8,11 +9,12 @@ import {
     createSession,
     createUser, findUserById, /* findVerificationEmailToken*/ findVerificationEmailTokenWithJoin, getUserByEmail, hashPassword,
     sendVerificationEmail,
+    updateProfileInDb,
     userShortLinks,
     verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
-import { emailVerificationSchema, loginUserSchema, registerUserSchema } from "../validators/auth.validators.js"
+import { emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
     if (!req.user) return res.redirect("/login")
@@ -261,6 +263,60 @@ export const verifyEmailToken = async (req, res) => {
     res.redirect("/profile")
 
 }
+
+// edit profile page;
+
+export const editProfilePage = async (req, res) => {
+
+    if (!req.user) return res.redirect("/login")
+
+    const user = await findUserById(req.user.id);
+
+    if (!user) {
+        return res.redirect("/login")
+    }
+
+    res.render("editProfile", {
+        name: user.name,
+        email: user.email,
+        errors: req.flash("errors")
+    })
+}
+
+export const updateProfile = async (req, res) => {
+    if (!req.user) return res.redirect("/login")
+
+    const result = updateProfileSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message);
+        req.flash("errors", errors)
+        return res.redirect("/edit-profile")
+    }
+
+    const { name, email } = result.data;
+
+    // update user in db
+    const user = await findUserById(req.user.id);
+    if (!user) {
+        req.flash("errors", "User not found")
+        return res.redirect("/edit-profile")
+    }
+    // check if email is changing and if new email already exists
+    if (email !== user.email) {
+        const existingUser = await getUserByEmail(email);
+        if (existingUser) {
+            req.flash("errors", "Email already in use")
+            return res.redirect("/edit-profile")
+        }
+    }
+
+    await updateProfileInDb(req.user.id, { name, email });
+
+    res.redirect("/profile")
+
+}
+
 
 export const getMe = async (req, res) => {
 

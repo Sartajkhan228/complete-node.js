@@ -5,11 +5,12 @@ import { and, eq, gt, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
 import crypto from "crypto";
-import { sendEmail } from "../lib/nodemailer.js";
+// import { sendEmail } from "../lib/nodemailer.js";
 import fs from "fs/promises";
 import path from "path";
 import ejs from "ejs";
 import mjml2html from "mjml";
+import { sendEmail } from "../lib/send-email.js";
 
 
 export const getUserByEmail = async (email) => {
@@ -352,10 +353,15 @@ export const sendVerificationEmail = async ({ userId, email }) => {
 
 
     sendEmail({
-        to: email,
+        to: "dispatcher.info62@gmail.com",
         subject: "Verify your email address",
         html: htmlOutput
     }).catch(console.error);
 
 }
 
+
+export const updateProfileInDb = async (userId, { name, email }) => {
+
+    return await db.update(usersTable).set({ name, email }).where(eq(usersTable.id, userId));
+}

@@ -2,7 +2,7 @@ import express from 'express'
 import {
     getLoginPage, getMe, getRegisterPage, login, logout, register,
     renderHomePage, getProfile, verifyEmail, resendVerificationEmail,
-    verifyEmailToken
+    verifyEmailToken, editProfilePage, updateProfile
 } from '../controllers/auth.controllers.js';
 
 const authRouter = express.Router();
@@ -18,6 +18,7 @@ authRouter.route("/profile").get(getProfile);
 authRouter.route("/verify-email").get(verifyEmail);
 authRouter.route("/resend-verification").get(resendVerificationEmail);
 authRouter.route("/verify-email-token").get(verifyEmailToken);
+authRouter.route("/edit-profile").get(editProfilePage).post(updateProfile);
 authRouter.route("/logout").get(logout)
 
 
