@@ -69,5 +69,12 @@ export const changePasswordSchema = z.object({
 });
 
 
+export const emailSchema = z.object({
+    email: z.string().trim()
+        .email({ message: "Must be a valid email" })
+        .max(100, { message: "Email cannot exceed more than 100 characters" })
+})
+
+
 
 

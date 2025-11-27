@@ -15,7 +15,7 @@ import {
     verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
-import { changePasswordSchema, emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
+import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
     if (!req.user) return res.redirect("/login")
@@ -244,7 +244,7 @@ export const verifyEmailToken = async (req, res) => {
     const result = emailVerificationSchema.safeParse(req.query);
 
     if (!result.success) {
-        return res.send("Zod validation failed")
+        return res.send("Validation failed")
     }
 
     const { token, email } = result.data;
@@ -385,6 +385,42 @@ export const updatePassword = async (req, res) => {
 
     req.flash("success", "Password updated successfully")
 
+
     res.redirect("/change-password")
+
+}
+
+
+export const forgotPasswordPage = async (req, res) => {
+
+    const errors = req.flash("errors");
+    const formSubmitted = req.flash("formSubmitted")[0];
+
+    res.render("forgotPassword", { errors, formSubmitted })
+}
+
+export const forgotPassword = async (req, res) => {
+
+    const result = emailSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message);
+        req.flash("errors", errors)
+        return res.redirect("/forgot-password")
+    }
+
+    const { email } = result.data;
+
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+        req.flash("errors", "If the email exists, a reset link has been sent")
+        return res.redirect("/forgot-password")
+    }
+
+    await sendVerificationEmail({ userId: user.id, email: user.email })
+
+    req.flash("success", "If the email exists, a reset link has been sent")
+    res.redirect("/forgot-password")
 
 }

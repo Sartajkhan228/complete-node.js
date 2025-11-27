@@ -33,6 +33,14 @@ export const emailVerificationTokens = mysqlTable("email_verification_tokens", {
     createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+    id: int().autoincrement().primaryKey(),
+    userId: int("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }).unique(),
+    hashToken: text("hash_token").notNull(),
+    expiresAt: timestamp("expires_at").default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 HOUR)`).notNull(),
+    createAt: timestamp("created_at").defaultNow().notNull()
+});
+
 export const shortLink = mysqlTable('short_link', {
     id: int().autoincrement().primaryKey(),
     url: varchar({ length: 255 }).notNull(),
