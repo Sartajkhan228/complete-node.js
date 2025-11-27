@@ -365,3 +365,9 @@ export const updateProfileInDb = async (userId, { name, email }) => {
 
     return await db.update(usersTable).set({ name, email }).where(eq(usersTable.id, userId));
 }
+
+
+export const updatePasswordInDb = async (userId, newHashedPassword) => {
+
+    return await db.update(usersTable).set({ password: newHashedPassword }).where(eq(usersTable.id, userId));
+}

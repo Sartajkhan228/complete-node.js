@@ -54,5 +54,21 @@ export const emailVerificationSchema = z.object({
 });
 
 
+export const changePasswordSchema = z.object({
+    currentPassword: z.string().trim()
+        .min(8, { message: "Current password must be minimum of 8 characters" })
+        .max(100, { message: "Current password must be a maximum of 100 characters" }),
+
+    newPassword: z.string().trim()
+        .min(8, { message: "New password must be minimum of 8 characters" })
+        .max(100, { message: "New password must be a maximum of 100 characters" }),
+    confirmNewPassword: z.string().trim()
+        .min(8, { message: "Confirm new password must be minimum of 8 characters" })
+        .max(100, { message: "Confirm new password must be a maximum of 100 characters" }),
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "New password and confirm new password must match",
+});
+
+
 
 

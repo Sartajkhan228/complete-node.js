@@ -9,12 +9,13 @@ import {
     createSession,
     createUser, findUserById, /* findVerificationEmailToken*/ findVerificationEmailTokenWithJoin, getUserByEmail, hashPassword,
     sendVerificationEmail,
+    updatePasswordInDb,
     updateProfileInDb,
     userShortLinks,
     verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
 import { loadLinks } from "../services/urlshortner.services.js"
-import { emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
+import { changePasswordSchema, emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
     if (!req.user) return res.redirect("/login")
@@ -337,4 +338,53 @@ export const logout = async (req, res) => {
     res.clearCookie("refresh_token")
 
     res.redirect("/login")
+}
+
+export const changePasswordPage = async (req, res) => {
+    if (!req.user) return res.redirect("/login")
+
+    const errors = req.flash("errors")
+    const success = req.flash("success")
+
+    res.render("changePassword", {
+        errors, success
+    })
+}
+
+
+export const updatePassword = async (req, res) => {
+    if (!req.user) return res.redirect("/login")
+
+    const result = changePasswordSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message);
+        req.flash("errors", errors)
+        return res.redirect("/change-password")
+    }
+
+    const { currentPassword, newPassword, confirmNewPassword } = result.data;
+
+    const user = await findUserById(req.user.id);
+
+    if (!user) {
+        req.flash("errors", "User not found")
+        return res.redirect("/change-password")
+    }
+
+    const isMatch = await compareHashedPassword({ hashedPassword: user.password, password: currentPassword });
+
+    if (!isMatch) {
+        req.flash("errors", "Current password is incorrect")
+        return res.redirect("/change-password")
+    }
+
+    const hashedNewPassword = await hashPassword(newPassword);
+
+    await updatePasswordInDb(req.user.id, hashedNewPassword);
+
+    req.flash("success", "Password updated successfully")
+
+    res.redirect("/change-password")
+
 }
