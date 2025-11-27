@@ -363,7 +363,7 @@ export const updatePassword = async (req, res) => {
         return res.redirect("/change-password")
     }
 
-    const { currentPassword, newPassword, confirmNewPassword } = result.data;
+    const { currentPassword, newPassword } = result.data;
 
     const user = await findUserById(req.user.id);
 
