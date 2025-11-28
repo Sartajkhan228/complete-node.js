@@ -7,15 +7,16 @@ import {
     createAccessToken,
     createRefreshToken,
     createSession,
-    createUser, findUserById, /* findVerificationEmailToken*/ findVerificationEmailTokenWithJoin, getUserByEmail, hashPassword,
+    createUser, deleteSelectedToken, findUserById, /* findVerificationEmailToken*/ findVerificationEmailTokenWithJoin, getPasswordResetToken, getUserByEmail, hashPassword,
+    sendPasswordResetEmail,
     sendVerificationEmail,
     updatePasswordInDb,
     updateProfileInDb,
     userShortLinks,
     verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
-import { loadLinks } from "../services/urlshortner.services.js"
-import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, registerUserSchema, updateProfileSchema } from "../validators/auth.validators.js"
+import { deleteSelectedId, loadLinks } from "../services/urlshortner.services.js"
+import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, passwordTokenVerificationSchema, registerUserSchema, resetPasswordSchema, updateProfileSchema } from "../validators/auth.validators.js"
 
 export const renderHomePage = async (req, res) => {
     if (!req.user) return res.redirect("/login")
@@ -93,7 +94,7 @@ export const register = async (req, res) => {
         maxAge: REFRESH_TOKEN_EXPIRY
     })
 
-    await sendVerificationEmail({ userId: newUser.id, email: newUser.email });
+    await sendVerificationEmail({ userId: newUser.id, email: newUser.email, name: newUser.name });
 
     res.redirect("/")
 
@@ -394,12 +395,12 @@ export const updatePassword = async (req, res) => {
 export const forgotPasswordPage = async (req, res) => {
 
     const errors = req.flash("errors");
-    const formSubmitted = req.flash("formSubmitted")[0];
+    const success = req.flash("success");
 
-    res.render("forgotPassword", { errors, formSubmitted })
+    res.render("forgotPassword", { errors, formSubmitted: success })
 }
 
-export const forgotPassword = async (req, res) => {
+export const forgotPasswordLink = async (req, res) => {
 
     const result = emailSchema.safeParse(req.body);
 
@@ -411,6 +412,8 @@ export const forgotPassword = async (req, res) => {
 
     const { email } = result.data;
 
+    console.log("USER EMAIL", email)
+
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -418,9 +421,100 @@ export const forgotPassword = async (req, res) => {
         return res.redirect("/forgot-password")
     }
 
-    await sendVerificationEmail({ userId: user.id, email: user.email })
+    await sendPasswordResetEmail({ userId: user.id, email: user.email, name: user.name })
+    // await sendVerificationEmail({ userId: user.id, email: user.email })
 
     req.flash("success", "If the email exists, a reset link has been sent")
     res.redirect("/forgot-password")
+
+}
+
+
+export const resetPasswordToken = async (req, res) => {
+
+    const { token } = req.params;
+
+    const passwordResetToken = await getPasswordResetToken(token);
+
+    if (!passwordResetToken) {
+        return res.render("invalid-token")
+    }
+
+    const errors = req.flash("errors")
+    const success = req.flash("success")
+
+    res.render("resetPasswordPage", {
+        errors,
+        success,
+        token
+    })
+
+}
+
+
+export const resetPassword = async (req, res) => {
+
+    const { token } = req.params;
+
+    const inputUserData = await getPasswordResetToken(token)
+
+    if (!inputUserData) {
+        return res.send("token is invlid or expired")
+    }
+
+    const result = resetPasswordSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message);
+        req.flash("errors", errors)
+        return res.redirect("/reset-password")
+    }
+
+    const { password } = result.data;
+
+    const user = await findUserById(inputUserData.userId);
+
+    if (!user) {
+        req.flash("errors", "User not found")
+        return res.redirect("/reset-password")
+    }
+
+    await deleteSelectedToken(user.id)
+
+    const hashedPassword = await hashPassword(password);
+
+    await updatePasswordInDb(user.id, hashedPassword);
+
+    // assining the tokens to the user
+
+    const session = await createSession(user.id, {
+        ip: req.clientId,
+        userAgent: req.header("user_agent")
+    })
+
+    const accessToken = createAccessToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        sessionId: session.id
+    })
+
+    const refreshToken = createRefreshToken(session.id)
+
+    const baseConfig = { httpOnly: true, secure: true }
+
+    res.cookie("access_token", accessToken, {
+        ...baseConfig,
+        maxAge: ACCESS_TOKEN_EXPIRY
+    })
+
+    res.cookie("refresh_token", refreshToken, {
+        ...baseConfig,
+        maxAge: REFRESH_TOKEN_EXPIRY
+    })
+
+    req.flash("success", "Password reset successfully")
+
+    res.redirect("/")
 
 }

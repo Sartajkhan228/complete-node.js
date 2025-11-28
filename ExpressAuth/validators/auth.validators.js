@@ -72,7 +72,24 @@ export const changePasswordSchema = z.object({
 export const emailSchema = z.object({
     email: z.string().trim()
         .email({ message: "Must be a valid email" })
-        .max(100, { message: "Email cannot exceed more than 100 characters" })
+})
+
+export const passwordTokenVerificationSchema = z.object({
+    hashToken: z.string().trim(),
+    email: z.string().trim().email()
+})
+
+
+export const resetPasswordSchema = z.object({
+    password: z.string().trim()
+        .min(8, { message: "Password must be minimum of 8 characters" })
+        .max(100, { message: "Password must not exceed more than 100 characters" }),
+    confirmPassword: z.string().trim()
+        .min(8, { message: "Password must be minimum of 8 characters" })
+        .max(100, { message: "Password must not exceed more than 100 characters" })
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Password and confirm password must match",
+    path: ["confirmPassword"]
 })
 
 

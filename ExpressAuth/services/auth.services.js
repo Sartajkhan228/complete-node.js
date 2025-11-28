@@ -1,6 +1,6 @@
 import { ACCESS_TOKEN_EXPIRY, MILLISECONDS_PER_SECOND, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 import { db } from "../config/db.js"
-import { emailVerificationTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
+import { emailVerificationTokens, passwordResetTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
 import { and, eq, gt, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
@@ -255,6 +255,14 @@ export const createEmailVerificationLink = async ({ email, token }) => {
     return urlApi.toString();
 }
 
+export const createPasswordResetLink = async ({ hashToken }) => {
+
+    const urlApi = new URL(`${process.env.BASE_URL}/reset-password/${hashToken}`);
+    // urlApi.searchParams.append("hashToken", hashToken)
+    // urlApi.searchParams.append("email", email)
+    return urlApi.toString();
+}
+
 
 // findVerificationEmailToken without joins:
 
@@ -321,11 +329,30 @@ export const clearUserVerificationTokens = async (email) => {
     await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id))
 }
 
+// createPasswordResetToken
+
+export const createPasswordResetToken = async ({ userId, hashToken }) => {
+
+    return db.transaction(async (txt) => {
+        try {
+            await txt.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
+
+            await txt.delete(passwordResetTokens).where(gt(passwordResetTokens.expiresAt, sql`CURRENT_TIMESTAMP`));
+
+            await txt.insert(passwordResetTokens).values({ userId, hashToken })
+
+        } catch (error) {
+            console.error("Error creating password reset token", error)
+            throw new Error("Unable to create password reset token");
+        }
+    })
+}
+
 
 
 // send verification email
 
-export const sendVerificationEmail = async ({ userId, email }) => {
+export const sendVerificationEmail = async ({ userId, email, name }) => {
 
     const randomToken = generateRandomToken();
 
@@ -344,7 +371,7 @@ export const sendVerificationEmail = async ({ userId, email }) => {
     );
 
     const filledTemplate = ejs.render(mjmlTemplate, {
-        name: "userMean",
+        name,
         token: randomToken,
         verifyLink: verifyEmailLink
     })
@@ -360,6 +387,33 @@ export const sendVerificationEmail = async ({ userId, email }) => {
 
 }
 
+export const sendPasswordResetEmail = async ({ userId, email, name }) => {
+
+    const tokenHash = crypto.randomBytes(32).toString("hex");
+    const hashToken = crypto.createHash("sha256").update(tokenHash).digest("hex");
+
+    await createPasswordResetToken({ userId, hashToken: hashToken })
+
+    const verifyPasswordLink = await createPasswordResetLink({ email, hashToken: tokenHash })
+
+    const mjmlTemplate = await fs.readFile(path.join(import.meta.dirname, "..", 'emails', "reset-password.mjml"), "utf-8")
+
+    const filledTemplate = ejs.render(mjmlTemplate, {
+        name: name,
+        token: tokenHash,
+        verifyLink: verifyPasswordLink
+    })
+
+    const htmlOutput = mjml2html(filledTemplate).html;
+
+    sendEmail({
+        to: "dispatcher.info62@gmail.com",
+        subject: "Reset your password",
+        html: htmlOutput
+    }).catch(console.error)
+
+}
+
 
 export const updateProfileInDb = async (userId, { name, email }) => {
 
@@ -370,4 +424,26 @@ export const updateProfileInDb = async (userId, { name, email }) => {
 export const updatePasswordInDb = async (userId, newHashedPassword) => {
 
     return await db.update(usersTable).set({ password: newHashedPassword }).where(eq(usersTable.id, userId));
+
+}
+
+export const getPasswordResetToken = async (token) => {
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+
+    const [user] = await db.select().from(passwordResetTokens).where(
+        and(
+            eq(passwordResetTokens.hashToken, hashedToken),
+            gt(passwordResetTokens.expiresAt, sql`CURRENT_TIMESTAMP`)
+        )
+    )
+
+    return user;
+
+}
+
+
+export const deleteSelectedToken = async (userId) => {
+
+    return await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId))
 }
