@@ -3,9 +3,8 @@ import {
     getLoginPage, getMe, getRegisterPage, login, logout, register,
     renderHomePage, getProfile, verifyEmail, resendVerificationEmail,
     verifyEmailToken, editProfilePage, updateProfile, changePasswordPage,
-    updatePassword, forgotPasswordPage,
-    forgotPasswordLink, resetPassword,
-    resetPasswordToken
+    updatePassword, forgotPasswordPage, forgotPasswordLink, resetPassword,
+    resetPasswordToken, getGoogleLoginPage, getGoogleCallback
 } from '../controllers/auth.controllers.js';
 
 const authRouter = express.Router();
@@ -26,6 +25,9 @@ authRouter.route("/change-password").get(changePasswordPage).post(updatePassword
 
 authRouter.route("/forgot-password").get(forgotPasswordPage).post(forgotPasswordLink);
 authRouter.route("/reset-password/:token").get(resetPasswordToken).post(resetPassword);
+
+authRouter.route("/google").get(getGoogleLoginPage);
+authRouter.route("/google/callback").get(getGoogleCallback)
 
 authRouter.route("/logout").get(logout)
 

@@ -8,6 +8,9 @@
 
     <!-- Tailwind CDN (optional) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -40,6 +43,32 @@
         <a href="/forgot-password">
             <p class="mt-4 text-start text-blue-600 font-semibold">Forgot Password?</p>
         </a>
+
+
+        <div class="flex items-center justify-center my-7 border-b-2 py-2">
+            <span class="text-center font-semibold">
+                <span class="border-2 mx-3"></span>
+                Or login with
+                <span class="border-2 mx-3"></span>
+            </span>
+        </div>
+
+        <div class="flex items-center justify-center">
+            <ul class="flex items-center gap-1">
+                <li class="text-2xl">
+                    <a href="#"
+                        class="px-3 py-2 rounded-full hover:bg-gray-100 transition-all duration-300 ease-in-out hover:text-blue-600">
+                        <i class="zmdi zmdi-github"></i>
+                    </a>
+                </li>
+                <li class="text-2xl">
+                    <a href="/google"
+                        class="px-3 py-2 rounded-full hover:bg-gray-100 transition-all duration-300 ease-in-out hover:text-blue-600">
+                        <i class="zmdi zmdi-google"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         <p class="mt-4 text-center">
             Don't have an account?

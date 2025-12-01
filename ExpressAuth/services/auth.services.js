@@ -1,6 +1,6 @@
 import { ACCESS_TOKEN_EXPIRY, MILLISECONDS_PER_SECOND, REFRESH_TOKEN_EXPIRY } from "../config/constants.js";
 import { db } from "../config/db.js"
-import { emailVerificationTokens, passwordResetTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
+import { emailVerificationTokens, oauthAccountsTable, passwordResetTokens, sessionsTable, shortLink, usersTable } from "../drizzle/schema.js"
 import { and, eq, gt, lt, sql } from "drizzle-orm"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
@@ -447,3 +447,69 @@ export const deleteSelectedToken = async (userId) => {
 
     return await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId))
 }
+
+export const getUserWithOauthId = async ({ email, provider }) => {
+
+    console.log("FIRST SITUATION")
+
+    const [user] = await db.select({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        isEmailVerified: usersTable.isEmailVerified,
+        providerAccountId: oauthAccountsTable.providersAccountId,
+        provider: oauthAccountsTable.provider
+    }).from(usersTable)
+        .leftJoin(oauthAccountsTable,
+            and(
+                eq(oauthAccountsTable.provider, provider),
+                eq(oauthAccountsTable.userId, usersTable.id)
+            )
+        )
+        .where(eq(usersTable.email, email))
+
+    console.log("USER IN FIRST SITUATION", user)
+
+    return user;
+}
+
+export const linkUserWithOauth = async ({ userId, provider, providerAccountId }) => {
+
+    await db.insert(oauthAccountsTable).values({
+        userId,
+        provider,
+        providerAccountId
+    })
+
+    console.log("SECOND SITUTION")
+
+}
+
+export const createUserWithOauth = async ({ name, email, provider, providersAccountId }) => {
+
+    console.log("THIRD SITIATION")
+
+    const user = await db.transaction(async (trx) => {
+
+        const [user] = await trx.insert(usersTable).values({
+            name,
+            email,
+            password: "",
+            isEmailVerified: true
+        }).$returningId();
+
+        await trx.insert(oauthAccountsTable).values({
+            userId: user.id,
+            provider,
+            providersAccountId
+        })
+
+        return user
+    })
+
+    return user;
+
+}
+
+
+
