@@ -450,8 +450,6 @@ export const deleteSelectedToken = async (userId) => {
 
 export const getUserWithOauthId = async ({ email, provider }) => {
 
-    console.log("FIRST SITUATION")
-
     const [user] = await db.select({
         id: usersTable.id,
         name: usersTable.name,
@@ -468,8 +466,6 @@ export const getUserWithOauthId = async ({ email, provider }) => {
         )
         .where(eq(usersTable.email, email))
 
-    console.log("USER IN FIRST SITUATION", user)
-
     return user;
 }
 
@@ -481,13 +477,9 @@ export const linkUserWithOauth = async ({ userId, provider, providerAccountId })
         providerAccountId
     })
 
-    console.log("SECOND SITUTION")
-
 }
 
 export const createUserWithOauth = async ({ name, email, provider, providersAccountId }) => {
-
-    console.log("THIRD SITIATION")
 
     const user = await db.transaction(async (trx) => {
 
@@ -508,7 +500,6 @@ export const createUserWithOauth = async ({ name, email, provider, providersAcco
     })
 
     return user;
-
 }
 
 

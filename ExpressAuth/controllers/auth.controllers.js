@@ -572,7 +572,6 @@ export const getGoogleLoginPage = async (req, res) => {
 export const getGoogleCallback = async (req, res) => {
 
     const { code, state } = req.query;
-    console.log("CODE AND STATE", code, state)
 
     const {
         google_oauth_state: storedState,
@@ -602,7 +601,6 @@ export const getGoogleCallback = async (req, res) => {
 
     }
 
-    console.log("TOKEN", tokens)
 
     const claims = arctic.decodeIdToken(tokens.idToken());
     const { sub: googleUserId, name, email } = claims;
@@ -662,3 +660,4 @@ export const getGoogleCallback = async (req, res) => {
 
     res.redirect("/")
 }
+
