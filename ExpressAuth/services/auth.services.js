@@ -455,7 +455,7 @@ export const getUserWithOauthId = async ({ email, provider }) => {
         name: usersTable.name,
         email: usersTable.email,
         isEmailVerified: usersTable.isEmailVerified,
-        providerAccountId: oauthAccountsTable.providersAccountId,
+        providersAccountId: oauthAccountsTable.providersAccountId,
         provider: oauthAccountsTable.provider
     }).from(usersTable)
         .leftJoin(oauthAccountsTable,
@@ -469,12 +469,12 @@ export const getUserWithOauthId = async ({ email, provider }) => {
     return user;
 }
 
-export const linkUserWithOauth = async ({ userId, provider, providerAccountId }) => {
+export const linkUserWithOauth = async ({ userId, provider, providersAccountId }) => {
 
     await db.insert(oauthAccountsTable).values({
         userId,
         provider,
-        providerAccountId
+        providersAccountId
     })
 
 }

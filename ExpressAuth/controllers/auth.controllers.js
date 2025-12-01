@@ -613,12 +613,12 @@ export const getGoogleCallback = async (req, res) => {
 
     // User created account using email manually first, and then after want to login with google using the same email as he used to register manually:
 
-    if (user && !user.providerAccountId) {
+    if (user && !user.providersAccountId) {
 
         await linkUserWithOauth({
             userId: user.id,
             provider: "google",
-            providerAccountId: googleUserId
+            providersAccountId: googleUserId
         })
     }
 
