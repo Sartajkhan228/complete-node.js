@@ -80,7 +80,7 @@ export const passwordTokenVerificationSchema = z.object({
 })
 
 
-export const resetPasswordSchema = z.object({
+const passwordSchema = z.object({
     password: z.string().trim()
         .min(8, { message: "Password must be minimum of 8 characters" })
         .max(100, { message: "Password must not exceed more than 100 characters" }),
@@ -91,6 +91,10 @@ export const resetPasswordSchema = z.object({
     message: "Password and confirm password must match",
     path: ["confirmPassword"]
 })
+
+
+export const resetPasswordSchema = passwordSchema;
+export const setPasswordSchema = passwordSchema;
 
 
 

@@ -8,6 +8,9 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
 
 </head>
 
@@ -16,6 +19,7 @@
     <main class="w-[600px]">
         <button
             class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+            <i class="zmdi zmdi-home"></i>
             <a href="/" class="text-white hover:text-gray-200 font-medium">Home</a>
         </button>
         <h1 class="text-center text-3xl py-5">Your profile</h1>
@@ -87,22 +91,36 @@
 
         </div>
         <div class="flex items-center justify-around mt-3">
-            <form action="/edit-profile" method="get">
+            <form action="/edit-profile" method="get" enctype="multipart/form-data">
                 <button
                     class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                    <i class="zmdi zmdi-edit"></i>
                     Update
                 </button>
             </form>
-            <form action="/change-password" method="get">
-                <button
-                    class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
-                    Change password
-                </button>
-            </form>
-            <button
-                class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
-                <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
-            </button>
+            <% if(user.hasPassword) { %>
+                <form action="/change-password" method="get">
+                    <button
+                        class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                        <i class="zmdi zmdi-key"></i>
+                        Change password
+                    </button>
+                </form>
+                <% } else { %>
+                    <form action="/set-password" method="get">
+                        <button
+                            class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                            <i class="zmdi zmdi-key"></i>
+                            Set Password
+                        </button>
+                    </form>
+
+                    <% } %>
+                        <button
+                            class="px-7 py-2 rounded-md font-semibold bg-cyan-600 text-white hover:bg-cyan-900  transition-all duration-300 ease-in-out">
+                            <i class="zmdi zmdi-power"></i>
+                            <a href="/logout" class="text-white hover:text-gray-200 font-medium">Logout</a>
+                        </button>
         </div>
 
 

@@ -1,4 +1,4 @@
-import { email } from "zod"
+import { email, success } from "zod"
 import { ACCESS_TOKEN_EXPIRY, OAUTH_EXCHANGE_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../config/constants.js"
 import {
     clearUserSessionId,
@@ -17,9 +17,10 @@ import {
     verifyUserEmailAndUpdate
 } from "../services/auth.services.js"
 import { deleteSelectedId, loadLinks } from "../services/urlshortner.services.js"
-import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, passwordTokenVerificationSchema, registerUserSchema, resetPasswordSchema, updateProfileSchema } from "../validators/auth.validators.js"
+import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, passwordTokenVerificationSchema, registerUserSchema, resetPasswordSchema, setPasswordSchema, updateProfileSchema } from "../validators/auth.validators.js"
 import * as arctic from "arctic";
 import { google } from "../lib/oauth/google.js"
+import { github } from "../lib/oauth/github.js"
 
 
 
@@ -207,6 +208,7 @@ export const getProfile = async (req, res) => {
             id: user.id,
             name: user.name,
             email: user.email,
+            hasPassword: Boolean(user.password),
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
             links: getUserShortLinks
@@ -597,7 +599,7 @@ export const getGoogleCallback = async (req, res) => {
 
     } catch (error) {
         req.flash("errors", "Coudn't login with google because of invalid login attempt. Please try again!");
-        res.redirect("/login")
+        return res.redirect("/login")
 
     }
 
@@ -655,9 +657,206 @@ export const getGoogleCallback = async (req, res) => {
 
     res.cookie("refresh_token", refreshToken, {
         ...baseConfig,
-        maxAge: ACCESS_TOKEN_EXPIRY
+        maxAge: REFRESH_TOKEN_EXPIRY
     })
 
     res.redirect("/")
+}
+
+
+export const getGithubLoginPage = async (req, res) => {
+
+    if (req.user) return res.redirect("/")
+
+    const state = arctic.generateState();
+    const url = github.createAuthorizationURL(state, ["user:email"])
+
+    const cookieConfig = {
+        httpOnly: true,
+        secure: true,
+        maxAge: OAUTH_EXCHANGE_EXPIRY,
+        sameSite: "lax"
+    }
+
+    console.log("ITS ABOUT TO SEND COOKIE")
+
+    res.cookie("github_oauth_state", state, cookieConfig)
+
+    res.redirect(url.toString());
+}
+
+
+export const getGithubCallback = async (req, res) => {
+
+    const { code, state } = req.query;
+
+    const { github_oauth_state: storedState } = req.cookies;
+
+    // function to handle error:
+    const handleFailedLogin = () => {
+        req.flash("errors", "Coudn't login with github because of invalid login attempt. Please try again!");
+        return res.redirect("/login")
+    }
+
+    console.log("CODE STATE", code, state)
+    console.log("STOREDSTATE", storedState)
+
+    if (!code ||
+        !state ||
+        !storedState ||
+        state !== storedState
+    ) {
+        return handleFailedLogin();
+    }
+
+
+    let tokens;
+
+    try {
+
+        tokens = await github.validateAuthorizationCode(code)
+
+    } catch (error) {
+        return handleFailedLogin();
+
+    }
+
+    const getGithubUserResponse = await fetch("https://api.github.com/user", {
+        headers: {
+            Authorization: `Bearer ${tokens.accessToken()}`,
+        }
+    })
+
+    if (!getGithubUserResponse.ok) {
+        return handleFailedLogin();
+    }
+
+    const githubUser = await getGithubUserResponse.json();
+
+    const { id: githubUserId, login: name } = githubUser;
+
+    // if (name === null || name === "") {
+    //     name = "Sartaj"
+    // }
+
+    console.log("GITBUBUSER", githubUser)
+    console.log("GITBUBUSER", githubUserId, name)
+
+    const githubEmailResponse = await fetch("https://api.github.com/user/emails", {
+
+        headers: {
+            Authorization: `Bearer ${tokens.accessToken()}`
+        }
+    })
+
+    if (!githubEmailResponse.ok) {
+        return handleFailedLogin()
+    }
+
+    const emails = await githubEmailResponse.json();
+
+    console.log("EMAILS IN GITHUB", emails)
+
+    // in github we have many emails we extract the primary email because one email is primary;
+    const email = emails.filter((e) => e.primary)[0].email;
+
+    if (!email) {
+        return handleFailedLogin()
+    }
+
+    let user = await getUserWithOauthId({
+        provider: "github",
+        email,
+    })
+
+    console.log("USER", user)
+
+    if (user && !user.providersAccountId) {
+        await linkUserWithOauth({
+            userId: user.id,
+            provider: "github",
+            providersAccountId: githubUserId
+        })
+    }
+
+    if (!user) {
+        user = await createUserWithOauth({
+            name,
+            email,
+            provider: "github",
+            providersAccountId: githubUserId
+        })
+
+
+    }
+
+    const session = await createSession(user.id, {
+        ip: req.clientId,
+        userAgent: req.header("user_agent")
+    })
+
+    const accessToken = createAccessToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        sessionId: session.id
+    })
+
+    const refreshToken = createRefreshToken(session.id)
+
+    const baseConfig = { httpOnly: true, secure: true }
+
+    res.cookie("access_token", accessToken, {
+        ...baseConfig,
+        maxAge: ACCESS_TOKEN_EXPIRY
+    })
+
+    res.cookie("refresh_token", refreshToken, {
+        ...baseConfig,
+        maxAge: REFRESH_TOKEN_EXPIRY
+    })
+
+    res.redirect("/")
+
+}
+
+
+export const setPasswordPage = async (req, res) => {
+
+    if (!req.user) return res.redirect("/")
+
+    return res.render("setPasswordPage", {
+        errors: req.flash("errors"),
+        success: req.flash("success")
+    })
+
+}
+
+export const setPassword = async (req, res) => {
+
+    const result = setPasswordSchema.safeParse(req.body);
+
+    if (!result.success) {
+        const errors = result.error.issues.map(err => err.message);
+        req.flash("errors", errors)
+        return res.redirect("/set-password")
+    }
+
+    const { password } = result.data;
+
+    const user = await findUserById(req.user.id);
+
+    if (user.password) {
+        req.flash("errors", "You already have your password, Instead change your password");
+
+        return res.redirect("/set-password")
+    }
+
+    const hashedPassword = await hashPassword(password)
+
+    await updatePasswordInDb(req.user.id, hashedPassword);
+
+    res.redirect("/profile")
+
 }
 

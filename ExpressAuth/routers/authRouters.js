@@ -4,7 +4,8 @@ import {
     renderHomePage, getProfile, verifyEmail, resendVerificationEmail,
     verifyEmailToken, editProfilePage, updateProfile, changePasswordPage,
     updatePassword, forgotPasswordPage, forgotPasswordLink, resetPassword,
-    resetPasswordToken, getGoogleLoginPage, getGoogleCallback
+    resetPasswordToken, getGoogleLoginPage, getGoogleCallback, getGithubLoginPage,
+    getGithubCallback, setPasswordPage, setPassword
 } from '../controllers/auth.controllers.js';
 
 const authRouter = express.Router();
@@ -20,7 +21,9 @@ authRouter.route("/profile").get(getProfile);
 authRouter.route("/verify-email").get(verifyEmail);
 authRouter.route("/resend-verification").get(resendVerificationEmail);
 authRouter.route("/verify-email-token").get(verifyEmailToken);
+
 authRouter.route("/edit-profile").get(editProfilePage).post(updateProfile);
+
 authRouter.route("/change-password").get(changePasswordPage).post(updatePassword);
 
 authRouter.route("/forgot-password").get(forgotPasswordPage).post(forgotPasswordLink);
@@ -28,6 +31,12 @@ authRouter.route("/reset-password/:token").get(resetPasswordToken).post(resetPas
 
 authRouter.route("/google").get(getGoogleLoginPage);
 authRouter.route("/google/callback").get(getGoogleCallback)
+
+authRouter.route("/github").get(getGithubLoginPage);
+authRouter.route("/github/callback").get(getGithubCallback);
+
+authRouter.route("/set-password").get(setPasswordPage).post(setPassword)
+
 
 authRouter.route("/logout").get(logout)
 

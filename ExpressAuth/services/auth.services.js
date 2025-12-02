@@ -427,6 +427,7 @@ export const updatePasswordInDb = async (userId, newHashedPassword) => {
 
 }
 
+
 export const getPasswordResetToken = async (token) => {
 
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
@@ -477,6 +478,8 @@ export const linkUserWithOauth = async ({ userId, provider, providersAccountId }
         providersAccountId
     })
 
+    console.log("SECOND STITUATION")
+
 }
 
 export const createUserWithOauth = async ({ name, email, provider, providersAccountId }) => {
@@ -486,7 +489,7 @@ export const createUserWithOauth = async ({ name, email, provider, providersAcco
         const [user] = await trx.insert(usersTable).values({
             name,
             email,
-            password: "",
+            // password: "",
             isEmailVerified: true
         }).$returningId();
 
