@@ -415,9 +415,9 @@ export const sendPasswordResetEmail = async ({ userId, email, name }) => {
 }
 
 
-export const updateProfileInDb = async (userId, { name, email }) => {
+export const updateProfileInDb = async (userId, { name, email, avatarUrl }) => {
 
-    return await db.update(usersTable).set({ name, email }).where(eq(usersTable.id, userId));
+    return await db.update(usersTable).set({ name, email, avatarUrl }).where(eq(usersTable.id, userId));
 }
 
 

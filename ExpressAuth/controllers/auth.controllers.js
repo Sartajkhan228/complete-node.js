@@ -294,6 +294,7 @@ export const editProfilePage = async (req, res) => {
     res.render("editProfile", {
         name: user.name,
         email: user.email,
+        avatarUrl: user.avatarUrl,
         errors: req.flash("errors")
     })
 }
@@ -326,7 +327,10 @@ export const updateProfile = async (req, res) => {
         }
     }
 
-    await updateProfileInDb(req.user.id, { name, email });
+    const fileUrl = req.file ? `uploads/avatar/${req.file.filename}` : undefined;
+
+
+    await updateProfileInDb(req.user.id, { name, email, fileUrl });
 
     res.redirect("/profile")
 

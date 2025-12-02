@@ -18,6 +18,8 @@ app.set("view engine", "ejs")
 // We use cookie parser to get cookies from client request
 app.use(cookieParser());
 
+app.use(express.static("public"))
+
 // to hangle errors
 app.use(session({ secret: "my-secret", resave: true, saveUninitialized: false }));
 app.use(flash());

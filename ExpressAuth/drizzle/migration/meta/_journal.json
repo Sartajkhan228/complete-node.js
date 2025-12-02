@@ -43,6 +43,13 @@
       "when": 1764608097053,
       "tag": "0005_wonderful_komodo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1764682486192,
+      "tag": "0006_lowly_sunfire",
+      "breakpoints": true
     }
   ]
 }
