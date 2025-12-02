@@ -682,8 +682,6 @@ export const getGithubLoginPage = async (req, res) => {
         sameSite: "lax"
     }
 
-    console.log("ITS ABOUT TO SEND COOKIE")
-
     res.cookie("github_oauth_state", state, cookieConfig)
 
     res.redirect(url.toString());
@@ -701,9 +699,6 @@ export const getGithubCallback = async (req, res) => {
         req.flash("errors", "Coudn't login with github because of invalid login attempt. Please try again!");
         return res.redirect("/login")
     }
-
-    console.log("CODE STATE", code, state)
-    console.log("STOREDSTATE", storedState)
 
     if (!code ||
         !state ||
@@ -739,13 +734,6 @@ export const getGithubCallback = async (req, res) => {
 
     const { id: githubUserId, login: name } = githubUser;
 
-    // if (name === null || name === "") {
-    //     name = "Sartaj"
-    // }
-
-    console.log("GITBUBUSER", githubUser)
-    console.log("GITBUBUSER", githubUserId, name)
-
     const githubEmailResponse = await fetch("https://api.github.com/user/emails", {
 
         headers: {
@@ -759,8 +747,6 @@ export const getGithubCallback = async (req, res) => {
 
     const emails = await githubEmailResponse.json();
 
-    console.log("EMAILS IN GITHUB", emails)
-
     // in github we have many emails we extract the primary email because one email is primary;
     const email = emails.filter((e) => e.primary)[0].email;
 
@@ -772,8 +758,6 @@ export const getGithubCallback = async (req, res) => {
         provider: "github",
         email,
     })
-
-    console.log("USER", user)
 
     if (user && !user.providersAccountId) {
         await linkUserWithOauth({

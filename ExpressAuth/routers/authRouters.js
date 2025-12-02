@@ -28,7 +28,7 @@ authRouter.route("/verify-email-token").get(verifyEmailToken);
 // for file upload:
 const avatarStorage = multer.diskStorage({
     destination: (req, file, cd) => {
-        cd(null, path.join(import.meta.dirname, 'public/uploads/avatar'))
+        cd(null, path.join(import.meta.dirname, '..', 'public', 'uploads', 'avatar'))
     },
     filename: (req, file, cd) => {
         const ext = path.extname(file.originalname);
