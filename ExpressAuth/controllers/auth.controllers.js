@@ -21,6 +21,8 @@ import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSc
 import * as arctic from "arctic";
 import { google } from "../lib/oauth/google.js";
 import { github } from "../lib/oauth/github.js";
+import fs from "fs";
+import path from "path";
 
 
 
@@ -312,6 +314,7 @@ export const updateProfile = async (req, res) => {
     }
 
     const { name, email } = result.data;
+    const removeAvatar = req.body.removeAvatar === "true";
 
     // update user in db
     const user = await findUserById(req.user.id);
@@ -328,8 +331,36 @@ export const updateProfile = async (req, res) => {
         }
     }
 
+    let fileUrl = user.avatarUrl;
+    console.log("FILEURL", fileUrl)
 
-    const fileUrl = req.file ? `uploads/avatar/${req.file.filename}` : user.avatarUrl;
+    // logic to remove the old urlpaths:
+
+    if (req.file) {
+        fileUrl = `uploads/avatar/${req.file.filename}`
+
+        if (user.avatarUrl) {
+            console.log("AVATARURL", user.avatarUrl)
+            try {
+                const oldPath = path.join(import.meta.dirname, "..", "public", user.avatarUrl)
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            } catch (error) {
+                console.log("Error to delete old files", error)
+            }
+        }
+    }
+
+    if (removeAvatar) {
+        if (user.avatarUrl) {
+            const oldPath = path.join(import.meta.dirname, "..", "public", user.avatarUrl);
+            if (fs.existsSync(oldPath)) {
+                fs.unlinkSync(oldPath)
+            }
+        }
+        fileUrl = null
+    }
 
     await updateProfileInDb(req.user.id, { name, email, avatarUrl: fileUrl });
 

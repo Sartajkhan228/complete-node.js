@@ -33,28 +33,32 @@
 
         <!-- Profile Picture -->
         <div class="flex flex-col items-center gap-3 mb-6">
+            <!-- Preview Image -->
+            <img src="<%= avatarUrl ? avatarUrl : '' %>" id="avatar_url"
+                class="w-28 h-28 rounded-full object-cover border-4 border-blue-100"
+                style="<%= avatarUrl ? '' : 'display:none' %>" />
 
-            <% if (avatarUrl) { %>
-                <img src="<%= avatarUrl %>" class="w-28 h-28 rounded-full border-4 border-blue-100 object-cover" />
-                <% } else { %>
-                    <div
-                        class="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-4xl">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <% } %>
+            <!-- Placeholder when no avatar exists -->
+            <div id="avatar_placeholder"
+                class="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-4xl"
+                style="<%= avatarUrl ? 'display:none' : '' %>">
+                <i class="fas fa-user"></i>
+            </div>
 
-                        <% if (avatarUrl) { %>
-                            <button type="button"
-                                class="text-red-500 hover:text-red-700 text-sm flex items-center gap-1">
-                                <i class="fas fa-trash"></i> Remove Photo
-                            </button>
-                            <% } %>
+            <!-- ALWAYS include remove button - hide if no avatar -->
+            <button type="button" id="remove_button"
+                class="text-red-500 hover:text-red-700 text-sm flex items-center gap-1"
+                style="<%= avatarUrl ? '' : 'display:none' %>">
+                <i class="fas fa-trash"></i> Remove Photo
+            </button>
         </div>
+
 
         <!-- FORM -->
         <form action="/edit-profile" method="post" enctype="multipart/form-data" class="space-y-4">
 
             <input type="file" name="avatar" accept="image/*">
+            <input type="hidden" name="removeAvatar" id="removeAvatar" value="false">
 
             <!-- Email -->
             <div>
@@ -89,6 +93,41 @@
         </form>
 
     </main>
+
+
+    <script>
+
+        const fileInput = document.querySelector('input[name="avatar"]');
+        const previewImage = document.getElementById("avatar_url");
+        const placeholder = document.getElementById("avatar_placeholder");
+        const removeBtn = document.getElementById("remove_button");
+
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                previewImage.src = URL.createObjectURL(file);
+                previewImage.style.display = "block";
+                placeholder.style.display = "none";
+                removeBtn.style.display = "inline-flex";
+            }
+
+        })
+
+        if (removeBtn) {
+            removeBtn.addEventListener("click", () => {
+                previewImage.src = "";
+                previewImage.style.display = "none";
+                placeholder.style.display = "flex";
+                fileInput.value = "";
+                document.getElementById("removeAvatar").value = "true";
+                removeBtn.style.display = "none";
+            })
+
+        }
+
+    </script>
+
 </body>
 
 </html>
