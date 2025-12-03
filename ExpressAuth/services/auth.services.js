@@ -478,8 +478,6 @@ export const linkUserWithOauth = async ({ userId, provider, providersAccountId }
         providersAccountId
     })
 
-    console.log("SECOND STITUATION")
-
 }
 
 export const createUserWithOauth = async ({ name, email, provider, providersAccountId }) => {

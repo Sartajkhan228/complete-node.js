@@ -877,4 +877,3 @@ export const setPassword = async (req, res) => {
     res.redirect("/profile")
 
 }
-
