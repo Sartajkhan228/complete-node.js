@@ -332,7 +332,6 @@ export const updateProfile = async (req, res) => {
     }
 
     let fileUrl = user.avatarUrl;
-    console.log("FILEURL", fileUrl)
 
     // logic to remove the old urlpaths:
 
@@ -340,7 +339,6 @@ export const updateProfile = async (req, res) => {
         fileUrl = `uploads/avatar/${req.file.filename}`
 
         if (user.avatarUrl) {
-            console.log("AVATARURL", user.avatarUrl)
             try {
                 const oldPath = path.join(import.meta.dirname, "..", "public", user.avatarUrl)
                 if (fs.existsSync(oldPath)) {
