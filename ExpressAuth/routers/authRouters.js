@@ -27,20 +27,24 @@ authRouter.route("/verify-email-token").get(verifyEmailToken);
 
 // for file upload:
 const avatarStorage = multer.diskStorage({
-    destination: (req, file, cd) => {
-        cd(null, path.join(import.meta.dirname, '..', 'public', 'uploads', 'avatar'))
+    destination: (req, file, cb) => {
+        const dest = path.join(import.meta.dirname, "..", "public", "uploads", "avatar");
+        console.log("Multer destination:", dest);
+        cb(null, dest)
     },
-    filename: (req, file, cd) => {
+    filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        cd(null, `${Date.now()}_${Math.random()}${ext}`);
+        cb(null, `${Date.now()}_${Math.random()}${ext}`);
     }
+
+
 })
 
-const avatarFileFilter = (req, file, cd) => {
+const avatarFileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
-        cd(null, true)
+        cb(null, true)
     } else {
-        cd(new Error("only image files are allowed"), false);
+        cb(new Error("only image files are allowed"), false);
     }
 };
 
@@ -69,6 +73,24 @@ authRouter.route("/set-password").get(setPasswordPage).post(setPassword)
 
 
 authRouter.route("/logout").get(logout)
+
+
+// test 
+
+// authRouter.get("/test-upload", (req, res) => {
+//     res.send(`
+//     <form action="/test-upload" method="post" enctype="multipart/form-data">
+//       <input type="file" name="avatar">
+//       <button type="submit">Upload</button>
+//     </form>
+//   `);
+// });
+
+// authRouter.post("/test-upload", avatarUploads.single("avatar"), (req, res) => {
+//     console.log("REQ FILE:", req.file);
+//     res.send(req.file ? "File uploaded!" : "No file received");
+// });
+
 
 
 export default authRouter;

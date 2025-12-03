@@ -19,8 +19,8 @@ import {
 import { deleteSelectedId, loadLinks } from "../services/urlshortner.services.js"
 import { changePasswordSchema, emailSchema, emailVerificationSchema, loginUserSchema, passwordTokenVerificationSchema, registerUserSchema, resetPasswordSchema, setPasswordSchema, updateProfileSchema } from "../validators/auth.validators.js"
 import * as arctic from "arctic";
-import { google } from "../lib/oauth/google.js"
-import { github } from "../lib/oauth/github.js"
+import { google } from "../lib/oauth/google.js";
+import { github } from "../lib/oauth/github.js";
 
 
 
@@ -209,6 +209,7 @@ export const getProfile = async (req, res) => {
             name: user.name,
             email: user.email,
             hasPassword: Boolean(user.password),
+            avatarUrl: user.avatarUrl,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
             links: getUserShortLinks
@@ -327,10 +328,10 @@ export const updateProfile = async (req, res) => {
         }
     }
 
-    const fileUrl = req.file ? `uploads/avatar/${req.file.filename}` : undefined;
 
+    const fileUrl = req.file ? `uploads/avatar/${req.file.filename}` : user.avatarUrl;
 
-    await updateProfileInDb(req.user.id, { name, email, fileUrl });
+    await updateProfileInDb(req.user.id, { name, email, avatarUrl: fileUrl });
 
     res.redirect("/profile")
 

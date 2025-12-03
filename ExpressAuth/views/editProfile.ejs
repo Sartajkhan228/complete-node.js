@@ -43,12 +43,6 @@
                     </div>
                     <% } %>
 
-                        <label for="avatar" class="text-blue-600 cursor-pointer hover:underline">
-                            <i class="fas fa-camera mr-1"></i> Change Photo
-                        </label>
-
-                        <input type="file" id="avatar" name="avatar" accept="image/*" class="hidden">
-
                         <% if (avatarUrl) { %>
                             <button type="button"
                                 class="text-red-500 hover:text-red-700 text-sm flex items-center gap-1">
@@ -59,6 +53,8 @@
 
         <!-- FORM -->
         <form action="/edit-profile" method="post" enctype="multipart/form-data" class="space-y-4">
+
+            <input type="file" name="avatar" accept="image/*">
 
             <!-- Email -->
             <div>
